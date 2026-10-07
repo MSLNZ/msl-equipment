@@ -45,6 +45,7 @@ class QueryParams(TypedDict):
     months: NotRequired[str]
     sync: NotRequired[str]
     text: NotRequired[str]
+    ignoreCase: NotRequired[str]
 
 
 class Scope(TypedDict):

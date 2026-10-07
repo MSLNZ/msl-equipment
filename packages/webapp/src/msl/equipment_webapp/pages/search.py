@@ -4,7 +4,6 @@
 from __future__ import annotations
 
 import contextlib
-import re
 from collections import deque
 from typing import TYPE_CHECKING
 from urllib.parse import unquote
@@ -57,7 +56,7 @@ def layout(**kwargs: str) -> html.Div:
                             ),
                             dbc.Modal(
                                 [
-                                    dbc.ModalHeader(dbc.ModalTitle("Invalid Syntax")),
+                                    dbc.ModalHeader(dbc.ModalTitle("Invalid search syntax")),
                                     dbc.ModalBody(id=f"{PAGE}-modal-body"),
                                 ],
                                 id=f"{PAGE}-modal",
@@ -67,7 +66,33 @@ def layout(**kwargs: str) -> html.Div:
                         width="auto",
                         className="d-flex mb-2 mb-md-0",
                     ),
-                    components.sync_checkbox(page=PAGE, value=params.sync, tip="checking"),
+                    dbc.Col(
+                        [
+                            components.sync_checkbox(page=PAGE, value=params.sync, tip="searching"),
+                            dbc.Col(
+                                html.Div(
+                                    [
+                                        dbc.Label(
+                                            "Ignore case:",
+                                            html_for=f"{PAGE}-ignore-case-checkbox",
+                                            className="me-2 mb-0",
+                                        ),
+                                        dbc.Checkbox(
+                                            id=f"{PAGE}-ignore-case-checkbox",
+                                            value=params.ignore_case,
+                                        ),
+                                        dbc.Tooltip(
+                                            "Whether to perform a case-insensitive search",
+                                            target=f"{PAGE}-ignore-case-checkbox",
+                                        ),
+                                    ],
+                                    className="d-flex align-items-center",
+                                ),
+                                width="auto",
+                                className="me-auto",
+                            ),
+                        ]
+                    ),
                     components.download_button(page=PAGE),
                 ],
                 className="g-2 align-items-center my-4 mx-0",
@@ -98,12 +123,14 @@ async def export_data_as_csv(n_clicks: int) -> bool:
     Input(f"{PAGE}-team-dropdown", "value"),
     Input(f"{PAGE}-input", "value"),
     Input(f"{PAGE}-sync-checkbox", "value"),
+    Input(f"{PAGE}-ignore-case-checkbox", "value"),
     State(f"{PAGE}-scope", "data"),
     State(f"{PAGE}-url", "href"),
     running=[
         (Output(f"{PAGE}-team-dropdown", "disabled"), True, False),
         (Output(f"{PAGE}-input", "disabled"), True, False),
         (Output(f"{PAGE}-sync-checkbox", "disabled"), True, False),
+        (Output(f"{PAGE}-ignore-case-checkbox", "disabled"), True, False),
     ],
     persistent=True,
     websocket=True,
@@ -112,6 +139,7 @@ async def update_table(
     teams: list[str],
     text: str | None,
     sync: bool,  # noqa: FBT001
+    ignore_case: bool,  # noqa: FBT001
     scope: Scope,
     href: str,
 ) -> tuple[str, bool, str | None]:
@@ -126,19 +154,20 @@ async def update_table(
         set_props(f"{PAGE}-table", {"rowData": data})
         await utils.process_events()
 
-    pattern: str | re.Pattern[str] = "."
-    if text:
-        try:
-            pattern = re.compile(text)
-        except re.error as e:
-            return href, True, f"{e.__class__.__name__}: {e}"
-
     if (not teams) or (not text):
         await update([])
         return href, False, None
 
-    _ = await utils.search(teams=teams, text=pattern, sync=sync, update=update)
-    return utils.log_and_href(scope, href, team=teams, text=text, sync=str(sync).lower()), False, None
+    _, _, _, error = await utils.search(teams=teams, text=text, sync=sync, ignore_case=ignore_case, update=update)
+    if error:
+        return href, True, error
+    return (
+        utils.log_and_href(
+            scope, href, team=teams, text=text, sync=str(sync).lower(), ignoreCase=str(ignore_case).lower()
+        ),
+        False,
+        None,
+    )
 
 
 @callback(

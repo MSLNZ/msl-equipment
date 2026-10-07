@@ -93,6 +93,8 @@ SEARCH_COLUMNS: AgGridColumns = [
 
 CONVERT_EXTENSIONS: tuple[str, ...] = (".docx", ".tex")
 
+BOOLEAN_TRUE: set[str] = {"1", "on", "t", "true", "y", "yes"}
+
 
 class DashQueryParams:
     """Parse the URL query parameters to initialise dash components in the layout."""
@@ -117,11 +119,14 @@ class DashQueryParams:
 
         # Support same "truthy" values as pydantic
         # https://pydantic.dev/docs/validation/latest/concepts/conversion_table/
-        self.sync: bool = params.get("sync", "0").lower() in {"1", "on", "t", "true", "y", "yes"}
+        self.sync: bool = params.get("sync", "0").lower() in BOOLEAN_TRUE
         """Whether to sync repositories."""
 
         self.search: str = unquote(params.get("text", ""))
         """Search text."""
+
+        self.ignore_case: bool = params.get("ignoreCase", "1").lower() in BOOLEAN_TRUE
+        """Whether to perform a case-insensitive search."""
 
 
 def get_scope() -> Scope:
@@ -624,8 +629,9 @@ async def recalibrations(  # noqa: C901
 async def search(
     *,
     teams: list[str],
-    text: str | re.Pattern[str],
+    text: str,
     sync: bool,
+    ignore_case: bool,
     update: Callable[[AgGridData, str], Awaitable[None]] | None = None,
 ) -> tuple[AgGridData, dict[str, bool], bool, str]:
     """Search for equipment.
@@ -633,7 +639,8 @@ async def search(
     Args:
         teams: The teams to check the equipment register of.
         text: The text to search for.
-        sync: Whether to perform a `git pull` on the register's repository before checking.
+        sync: Whether to perform a `git pull` on the register's repository before searching.
+        ignore_case: Whether to perform a case-insensitive search.
         update: A function to call if calling this method from within a `dash` callback.
 
     Returns:
@@ -645,7 +652,7 @@ async def search(
     data: AgGridData = []
 
     try:
-        pattern = re.compile(text)
+        pattern = re.compile(text, flags=re.IGNORECASE if ignore_case else 0)
     except re.error as e:
         return data, is_valid, synced, f"{e.__class__.__name__}: {e}"
 

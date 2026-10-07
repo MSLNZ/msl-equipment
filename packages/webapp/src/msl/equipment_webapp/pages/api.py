@@ -176,9 +176,14 @@ async def search(
         str, Query(description="The text to search for (supports a [regular-expression pattern](https://regexr.com/))")
     ],
     sync: Sync = False,
+    ignore_case: Annotated[
+        bool, Query(description="Whether to perform a case-insensitive search.", alias="ignoreCase")
+    ] = True,
 ) -> Table:
     """Search for equipment."""
-    data, is_valid, synced, error = await utils.search(teams=[t.value for t in team], text=text, sync=sync)
+    data, is_valid, synced, error = await utils.search(
+        teams=[t.value for t in team], text=text, sync=sync, ignore_case=ignore_case
+    )
     if error:
         raise HTTPException(status_code=400, detail=error)
 

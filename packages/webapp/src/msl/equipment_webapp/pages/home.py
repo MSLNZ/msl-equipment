@@ -108,8 +108,8 @@ specify `text` to return all equipment by specifying the `.` (a dot) character &
 regular-expression pattern that matches any character (except for line terminators),
   - <dccLink href="/search?team=Length&text=." />
 
-specify the `sync` parameter (a *checked* value can be one of `1`, `on`, `yes` or `true`),
-  - <dccLink href="/search?sync=true" />
+specify the `sync` and `ignoreCase` parameters (a *checked* value can be one of `1`, `on`, `yes` or `true`),
+  - <dccLink href="/search?sync=true&ignoreCase=false" />
 
 specify multiple `team`s by repeating the `team=value` pair.
   - <dccLink href="/search?team=Light&team=Length" />

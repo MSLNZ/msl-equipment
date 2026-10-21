@@ -122,3 +122,4 @@ Table([[2.500000e+02, 1.818000e-02, 2.033000e-02],
     options:
         show_root_full_path: false
         show_root_heading: true
+        show_attribute_values: false

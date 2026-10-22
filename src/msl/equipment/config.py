@@ -19,12 +19,13 @@ if TYPE_CHECKING:
     from .typing import XMLSource
 
 
-def _sources(text: str | None, tag: Literal["register", "connections"]) -> list[Path | Element[str]]:
+def _sources(text: str | None, tag: Literal["register", "connections"], config_dir: Path) -> list[Path | Element[str]]:
     """Get the XML source files from `<register>` or `<connections>` elements in a config file.
 
     Args:
         text: The text value of a `<register>` or `<connections>` element.
         tag: The name of the root tag to check for when searching a directory for XML files.
+        config_dir: The directory where the configuration file is located.
     """
     if not text or not text.strip():
         return []
@@ -39,6 +40,8 @@ def _sources(text: str | None, tag: Literal["register", "connections"]) -> list[
             root = parse(file).getroot()  # noqa: S314
             if root.tag.endswith(tag):
                 sources.append(root)
+    elif (not path.is_file()) and (config_dir / path).is_file():
+        sources.append(config_dir / path)
     else:
         sources.append(path)
 
@@ -95,8 +98,9 @@ class Config:
 
             os.environ["PATH"] += os.pathsep + os.pathsep.join(paths)
 
+        config_dir = Path(self.path).parent
         for element in self.findall("connections"):
-            connections.add(*_sources(element.text, "connections"))
+            connections.add(*_sources(element.text, "connections", config_dir))
 
     def __repr__(self) -> str:  # pyright: ignore[reportImplicitOverride]
         """Returns the string representation."""
@@ -163,9 +167,10 @@ class Config:
         if self._registers is not None:
             return self._registers
 
+        config_dir = Path(self.path).parent
         registers: dict[str, Register] = {}
         for element in self.findall("register"):
-            sources = _sources(element.text, "register")
+            sources = _sources(element.text, "register", config_dir)
             if sources:
                 register = Register(*sources)
                 registers[register.team] = register

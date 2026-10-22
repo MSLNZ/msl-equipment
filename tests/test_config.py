@@ -8,6 +8,7 @@ from xml.etree.ElementTree import ParseError
 import pytest
 
 from msl.equipment import Config
+from msl.equipment.schema import connections
 
 ORIGINAL_PATH = os.environ["PATH"]
 
@@ -347,3 +348,49 @@ def test_equipment_repr() -> None:
     c = Config(StringIO(text))
     assert len(c.equipment) == 2
     assert repr(c.equipment) == "<ConfigEquipment (2 equipment elements)>"
+
+
+def test_file_path_relative_to_config_okay(tmp_path: Path) -> None:
+    cfg_file = tmp_path / "config.xml"
+    _ = cfg_file.write_text("""<?xml version="1.0" encoding="utf-8"?>
+        <config>
+            <connections>a/mass-connections.xml</connections>
+        </config>
+    """)
+
+    file = tmp_path / "a" / "mass-connections.xml"
+    file.parent.mkdir()
+    _ = file.write_text("""<?xml version="1.0" encoding="utf-8"?>
+        <connections>
+            <connection>
+                <id>MSLE.M.092</id>
+                <address>COM1</address>
+            </connection>
+        </connections>
+    """)
+
+    c = Config(cfg_file)
+    assert len(c.equipment) == 0
+    assert connections["MSLE.M.092"].address == "COM1"
+
+
+def test_file_path_relative_to_config_not_found(tmp_path: Path) -> None:
+    cfg_file = tmp_path / "config.xml"
+    _ = cfg_file.write_text("""<?xml version="1.0" encoding="utf-8"?>
+        <config>
+            <connections>mass-connections.xml</connections>
+        </config>
+    """)
+
+    with pytest.raises(FileNotFoundError, match=r"'mass-connections.xml'"):
+        _ = Config(cfg_file)
+
+
+def test_file_like_connections_not_found() -> None:
+    text = """<?xml version="1.0" encoding="utf-8"?>
+        <config>
+            <connections>missing.xml</connections>
+        </config>
+    """
+    with pytest.raises(FileNotFoundError, match=r"'missing.xml'"):
+        _ = Config(StringIO(text))

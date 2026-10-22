@@ -65,7 +65,8 @@ The following illustrates an example configuration file.
     that <equipment/> elements are defined in the configuration file. You can
     also access the equipment by its `id` value. All other attributes are
     ignored by msl-equipment. Additional attributes may be helpful for a person
-    to know what the equipment is when they read the configuration file.
+    to know extra information about the equipment when they view the
+    configuration file in a text editor.
 
     Not all <equipment/> elements that are defined need to be for communication
     purposes. Cables, amplifiers, filters and adaptors can all be important
@@ -86,6 +87,7 @@ The following illustrates an example configuration file.
     registers.
 
     The value supports the ~ character to represent the users HOME directory.
+
     The <register> element can be specified multiple times.
   -->
   <register>~\Equipment\register.xml</register>
@@ -98,9 +100,12 @@ The following illustrates an example configuration file.
     will be searched for connection files.
 
     The value supports the ~ character to represent the users HOME directory.
+    The value can also be a path that is relative to the location of the
+    configuration file or to the current working directory.
+
     The <connections> element can be specified multiple times.
   -->
-  <connections>C:\DATA\Connections\transmittance.xml</connections>
+  <connections>communication/devices.xml</connections>
 
   <!-- USER SPECIFIC: You may define your own elements. -->
   <max_temperature unit="°C">30</max_temperature>

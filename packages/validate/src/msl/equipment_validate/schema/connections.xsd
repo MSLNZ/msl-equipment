@@ -6,7 +6,7 @@
         <xsd:element name="connection">
           <xsd:complexType>
             <xsd:all>
-              <xsd:element name="eid" type="xsd:string">
+              <xsd:element name="id" type="xsd:string">
                 <xsd:annotation>
                   <xsd:documentation>
                     The equipment ID from an equipment register.

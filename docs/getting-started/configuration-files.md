@@ -59,11 +59,11 @@ The following illustrates an example configuration file.
 
   <!-- Specify the equipment that is required to perform the measurement.
 
-    The `eid` attribute (equipment ID from an equipment register) is mandatory,
+    The `id` attribute (equipment ID from an equipment register) is mandatory,
     and the `name` attribute is optional. If you define a `name`, you can access
     the equipment by its name instead of the index number based on the order
     that <equipment/> elements are defined in the configuration file. You can
-    also access the equipment by its `eid` value. All other attributes are
+    also access the equipment by its `id` value. All other attributes are
     ignored by msl-equipment. Additional attributes may be helpful for a person
     to know what the equipment is when they read the configuration file.
 
@@ -74,9 +74,9 @@ The following illustrates an example configuration file.
     can save the <equipment/> information (or just the equipment IDs) to the
     output file.
    -->
-  <equipment eid="MSLE.M.092" name="dmm" comment="borrowed from Kibble lab"/>
-  <equipment eid="MSLE.O.103" name="photodiode" manufacturer="MSL" std="B03"/>
-  <equipment eid="MSLE.O.061" name="monochromator"/>
+  <equipment id="MSLE.M.092" name="dmm" comment="borrowed from Kibble lab"/>
+  <equipment id="MSLE.O.103" name="photodiode" manufacturer="MSL" std="B03"/>
+  <equipment id="MSLE.O.061" name="monochromator"/>
 
   <!-- Equipment registers that the equipment above can be found in.
 

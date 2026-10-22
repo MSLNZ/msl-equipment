@@ -3103,7 +3103,7 @@ class Connection:
     __slots__: tuple[str, ...] = (
         "address",
         "backend",
-        "eid",
+        "id",
         "manufacturer",
         "model",
         "properties",
@@ -3115,7 +3115,7 @@ class Connection:
         address: str,
         *,
         backend: Literal["MSL", "PyVISA", "NIDAQ"] | Backend = Backend.MSL,
-        eid: str = "",
+        id: str = "",  # noqa: A002
         manufacturer: str = "",
         model: str = "",
         serial: str = "",
@@ -3126,7 +3126,7 @@ class Connection:
         Args:
             address: The VISA-style address of the connection (see [here][address-syntax] for examples).
             backend: The [backend][msl.equipment.enumerations.Backend] to use to communicate with the equipment.
-            eid: The [equipment id][msl.equipment.schema.Equipment.id] to associate with the [Connection][] instance.
+            id: The equipment [id][msl.equipment.schema.Equipment.id] to associate with the [Connection][] instance.
             manufacturer: The name of the manufacturer of the equipment.
             model: The model number of the equipment.
             serial: The serial number (or unique identifier) of the equipment.
@@ -3139,8 +3139,8 @@ class Connection:
         self.backend: Backend = Backend(backend)
         """The [backend][msl.equipment.enumerations.Backend] that is used to communicate with the equipment."""
 
-        self.eid: str = eid
-        """The [equipment id][msl.equipment.schema.Equipment.id] associated with the [Connection][] instance."""
+        self.id: str = id
+        """The equipment [id][msl.equipment.schema.Equipment.id] associated with the [Connection][] instance."""
 
         self.manufacturer: str = manufacturer
         """The name of the manufacturer of the equipment."""
@@ -3166,7 +3166,7 @@ class Connection:
 
     def __repr__(self) -> str:  # pyright: ignore[reportImplicitOverride]
         """Returns the string representation."""
-        return f"{self.__class__.__name__}(eid={self.eid!r}, address={self.address!r})"
+        return f"{self.__class__.__name__}(id={self.id!r}, address={self.address!r})"
 
     def connect(self) -> _Any:  # noqa: ANN401
         """Connect to the equipment for computer control.
@@ -3182,7 +3182,7 @@ class Connection:
            that is supported by one of the [Interfaces][connections-interfaces], that Interface is used.
         """
         equipment = Equipment(
-            id=self.eid,
+            id=self.id,
             manufacturer=self.manufacturer,
             model=self.model,
             serial=self.serial,
@@ -3192,31 +3192,31 @@ class Connection:
 
 
 class Connections:
-    """Singleton class containing an eid:Connection mapping from <connections> defined in a configuration file."""
+    """Singleton class containing an id:Connection mapping from <connections> defined in a configuration file."""
 
     def __init__(self) -> None:
-        """Singleton class containing an eid:Connection mapping from <connections> defined in a configuration file."""
+        """Singleton class containing an id:Connection mapping from <connections> defined in a configuration file."""
         self._connections: dict[str, Connection | Element[str]] = {}
 
-    def __contains__(self, eid: str) -> bool:
-        """Check whether an eid is in the mapping."""
-        return eid in self._connections
+    def __contains__(self, key: str) -> bool:
+        """Check whether an id is in the mapping."""
+        return key in self._connections
 
-    def __getitem__(self, eid: str) -> Connection:
+    def __getitem__(self, key: str) -> Connection:
         """Returns a Connection instance."""
-        item = self._connections.get(eid)
+        item = self._connections.get(key)
         if isinstance(item, Connection):
             return item
 
         if item is None:
             msg = (
-                f"A <connection> element with eid={eid!r} cannot be found in the "
+                f"A <connection> element with id={key!r} cannot be found in the "
                 f"connections that are specified in the configuration file"
             )
             raise KeyError(msg)
 
         connection = self._from_xml(item)
-        self._connections[eid] = connection
+        self._connections[key] = connection
         return connection
 
     def __len__(self) -> int:
@@ -3228,7 +3228,7 @@ class Connections:
         for source in sources:
             root = source if isinstance(source, Element) else ElementTree().parse(source)
 
-            # schema requires that the eid is the first child element
+            # schema requires that the id is the first child element
             self._connections.update({e[0].text: e for e in root if e[0].text})
 
     def clear(self) -> None:
@@ -3237,12 +3237,12 @@ class Connections:
 
     def _from_xml(self, element: Element[str]) -> Connection:  # noqa: C901
         """Convert a <connection> from a connections XML file."""
-        eid, address, backend, manufacturer, model, serial = "", "", Backend.MSL, "", "", ""
+        _id, address, backend, manufacturer, model, serial = "", "", Backend.MSL, "", "", ""
         properties: dict[str, bool | float | str | None] = {}
         for e in element:
             tag, text = e.tag, e.text or ""
-            if tag == "eid":
-                eid = text
+            if tag == "id":
+                _id = text
             elif tag == "address":
                 address = text
             elif e.tag == "backend":
@@ -3262,7 +3262,7 @@ class Connections:
                         properties[child.tag] = None if child.text is None else to_primitive(child.text)
 
         return Connection(
-            eid=eid,
+            id=_id,
             address=address,
             backend=backend,
             manufacturer=manufacturer,

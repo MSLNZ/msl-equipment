@@ -1,36 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 <connections>
     <connection>
-        <eid>MSLE.M.092</eid>
+        <id>MSLE.M.092</id>
         <address>COM1</address>
     </connection>
     <connection>
-        <eid>MSLE.M.001</eid>
+        <id>MSLE.M.001</id>
         <address>GPIB::22</address>
         <backend>MSL</backend>
     </connection>
     <connection>
-        <eid>MSLE.M.100</eid>
+        <id>MSLE.M.100</id>
         <address>TCPIP::dev.company.com::hislip0</address>
         <manufacturer/>
     </connection>
     <connection>
-        <eid>MSLE.O.231</eid>
+        <id>MSLE.O.231</id>
         <address>SDK::library.dll</address>
         <model/>
     </connection>
     <connection>
-        <eid>MSLE.O.103</eid>
+        <id>MSLE.O.103</id>
         <address>TCPIP::192.168.1.100</address>
         <serial/>
     </connection>
     <connection>
-        <eid>MSLE.O.061</eid>
+        <id>MSLE.O.061</id>
         <address>TCP::192.168.1.100::5000</address>
         <properties/>
     </connection>
     <connection>
-        <eid>MSLE.O.023</eid>
+        <id>MSLE.O.023</id>
         <address>ASRL/dev/ttyS1</address>
         <backend>PyVISA</backend>
         <manufacturer>Manufacturer</manufacturer>

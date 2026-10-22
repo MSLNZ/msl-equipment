@@ -470,7 +470,7 @@ def test_cli_success(capsys: pytest.CaptureFixture[str]) -> None:
     assert out == "Success, no issues found!\n"
 
 
-def test_duplicate_eid_exit_first(caplog: pytest.LogCaptureFixture) -> None:
+def test_duplicate_id_exit_first(caplog: pytest.LogCaptureFixture) -> None:
     Summary.reset()
     assert Summary.num_issues == 0
 
@@ -489,7 +489,7 @@ def test_duplicate_eid_exit_first(caplog: pytest.LogCaptureFixture) -> None:
     assert len(r) == 1
 
 
-def test_duplicate_eid_different_directories(caplog: pytest.LogCaptureFixture) -> None:
+def test_duplicate_id_different_directories(caplog: pytest.LogCaptureFixture) -> None:
     Summary.reset()
     assert Summary.num_issues == 0
 

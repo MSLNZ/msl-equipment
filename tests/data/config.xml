@@ -11,9 +11,9 @@
         <recipient>you@measurement.govt.nz</recipient>
     </smtp>
 
-    <equipment eid="MSLE.M.092" name="dmm" comment="borrowed from Kibble lab"/>
-    <equipment eid="MSLE.O.103" name="photodiode" manufacturer="MSL" std="B03"/>
-    <equipment eid="MSLE.O.061" name="monochromator"/>
+    <equipment id="MSLE.M.092" name="dmm" comment="borrowed from Kibble lab"/>
+    <equipment id="MSLE.O.103" name="photodiode" manufacturer="MSL" std="B03"/>
+    <equipment id="MSLE.O.061" name="monochromator"/>
 
     <register>tests/data/mass</register>
     <register>tests/data/light</register>

@@ -12,17 +12,17 @@ Schema definition for connection information. See [this section][validate] for d
 
 ### Example {: #connections-xml-example }
 
-Example XML file to specify connection information. Only the `<eid>` and `<address>` elements are required, all other elements are optional.
+Example XML file to specify connection information. Only the `<id>` and `<address>` elements are required, all other elements are optional.
 
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
 <connections>
   <connection>
-    <eid>MSLE.M.041</eid>
+    <id>MSLE.M.041</id>
     <address>TCPIP::192.168.1.10::hislip0</address>
   </connection>
   <connection>
-    <eid>MSLE.M.023</eid>
+    <id>MSLE.M.023</id>
     <address>ASRL/dev/ttyS1</address>
     <backend>MSL</backend>
     <manufacturer>Company Name</manufacturer>

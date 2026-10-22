@@ -65,7 +65,7 @@ class NIDAQ(Interface, backend=Backend.NIDAQ):
         import nidaqmx
         from msl.equipment import Config
 
-        # config.xml contains <equipment eid="MSLE.0.142" name="daq" manufacturer="NI"/>
+        # config.xml contains <equipment id="MSLE.0.142" name="daq" manufacturer="NI"/>
         # and specifies where the equipment registers are and the connections file.
         cfg = Config("config.xml")
         equipment = cfg.equipment["daq"]

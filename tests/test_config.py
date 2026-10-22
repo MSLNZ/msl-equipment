@@ -286,17 +286,17 @@ def test_equipment_raises() -> None:
         _ = c.equipment["unknown"]
 
 
-def test_equipment_names_eids() -> None:
+def test_equipment_names_ids() -> None:
     c = Config(Path(__file__).parent / "data" / "config.xml")
     assert c.equipment.names == ("dmm", "photodiode", "monochromator")
-    assert c.equipment.eids == ("MSLE.M.092", "MSLE.O.103", "MSLE.O.061")
+    assert c.equipment.ids == ("MSLE.M.092", "MSLE.O.103", "MSLE.O.061")
 
     text = """<?xml version="1.0" encoding="utf-8"?>
         <config>
-            <equipment eid="MSLE.M.092" name="alice"/>
-            <equipment eid="MSLE.O.103"/>
-            <equipment eid="MSLE.O.061" name="bob"/>
-            <equipment eid="MSLE.O.231"/>
+            <equipment id="MSLE.M.092" name="alice"/>
+            <equipment id="MSLE.O.103"/>
+            <equipment id="MSLE.O.061" name="bob"/>
+            <equipment id="MSLE.O.231"/>
 
             <register>tests/data/mass</register>
             <register>tests/data/light</register>
@@ -305,14 +305,14 @@ def test_equipment_names_eids() -> None:
 
     c = Config(StringIO(text))
     assert c.equipment.names == ("alice", "", "bob", "")
-    assert c.equipment.eids == ("MSLE.M.092", "MSLE.O.103", "MSLE.O.061", "MSLE.O.231")
+    assert c.equipment.ids == ("MSLE.M.092", "MSLE.O.103", "MSLE.O.061", "MSLE.O.231")
 
 
 def test_equipment_missing_register() -> None:
     text = """<?xml version="1.0" encoding="utf-8"?>
         <config>
-            <equipment eid="MSLE.M.092"/>
-            <equipment eid="MSLE.O.103"/>
+            <equipment id="MSLE.M.092"/>
+            <equipment id="MSLE.O.103"/>
             <register>tests/data/mass</register>
         </config>
     """
@@ -333,15 +333,15 @@ def test_equipment_repr() -> None:
     assert len(c.equipment) == 0
     assert repr(c.equipment) == "<ConfigEquipment (0 equipment elements)>"
 
-    text = '<?xml version="1.0" encoding="utf-8"?><config><equipment eid="MSLE.M.092"/></config>'
+    text = '<?xml version="1.0" encoding="utf-8"?><config><equipment id="MSLE.M.092"/></config>'
     c = Config(StringIO(text))
     assert len(c.equipment) == 1
     assert repr(c.equipment) == "<ConfigEquipment (1 equipment element)>"
 
     text = """<?xml version="1.0" encoding="utf-8"?>
         <config>
-            <equipment eid="MSLE.M.092"/>
-            <equipment eid="MSLE.O.103"/>
+            <equipment id="MSLE.M.092"/>
+            <equipment id="MSLE.O.103"/>
         </config>
     """
     c = Config(StringIO(text))

@@ -124,7 +124,7 @@ class Config:
         """Returns the `<equipment/>` elements in the configuration file like a sequence of [Equipment][] items.
 
         Using the returned object you can access [Equipment][] items by index (based on the order that
-        `<equipment/>` elements are defined in the configuration file), by the `eid` attribute value or
+        `<equipment/>` elements are defined in the configuration file), by the `id` attribute value or
         by the `name` attribute value. You can also iterate over the [Equipment][] items in the sequence.
 
         See [here][config-python-example] for examples.
@@ -232,34 +232,34 @@ class ConfigEquipment:
         """
         self._cfg: Config = cfg
         self._elements: list[Element[str]] = cfg.findall("equipment")
-        self._equipment: dict[str, Equipment] = {}  # key=eid
-        self._index_map: dict[int, str] = {i: e.attrib["eid"] for i, e in enumerate(self._elements)}
+        self._equipment: dict[str, Equipment] = {}  # key=id
+        self._index_map: dict[int, str] = {i: e.attrib["id"] for i, e in enumerate(self._elements)}
         self._name_map: dict[str, str] = {
-            e.attrib["name"]: e.attrib["eid"] for e in self._elements if e.attrib.get("name")
+            e.attrib["name"]: e.attrib["id"] for e in self._elements if e.attrib.get("name")
         }
 
     def __getitem__(self, item: str | int) -> Equipment:
         """Returns the `equipment` item from the configuration file."""
         if isinstance(item, int):
-            eid = self._index_map.get(item)
-            if eid is None:
+            _id = self._index_map.get(item)
+            if _id is None:
                 msg = "index out of range"
                 raise IndexError(msg)
         else:
-            eid = self._name_map.get(item, item)  # assume item=eid if not a name
+            _id = self._name_map.get(item, item)  # assume item=id if not a name
 
-        equipment = self._equipment.get(eid)
+        equipment = self._equipment.get(_id)
         if equipment is not None:
             return equipment
 
         for register in self._cfg.registers.values():
-            equipment = register.get(eid)
+            equipment = register.get(_id)
             if equipment is not None:
-                self._equipment[eid] = equipment
+                self._equipment[_id] = equipment
                 return equipment
 
         msg = (
-            f"The equipment with id {eid!r} cannot be found in the "
+            f"The equipment with id {_id!r} cannot be found in the "
             f"registers that are specified in the configuration file"
         )
         raise ValueError(msg)
@@ -280,8 +280,8 @@ class ConfigEquipment:
         return f"<{self.__class__.__name__} ({n} equipment element{plural})>"
 
     @property
-    def eids(self) -> tuple[str, ...]:
-        """Returns the value of the `eid` attribute for each `<equipment/>` element in a configuration file."""
+    def ids(self) -> tuple[str, ...]:
+        """Returns the value of the `id` attribute for each `<equipment/>` element in a configuration file."""
         return tuple(self._index_map.values())
 
     @property

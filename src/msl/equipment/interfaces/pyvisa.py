@@ -71,7 +71,7 @@ class PyVISA(Interface, backend=Backend.PyVISA):
         import pyvisa
         from msl.equipment import Config
 
-        # config.xml contains <equipment eid="MSLE.0.063" name="dmm"/>
+        # config.xml contains <equipment id="MSLE.0.063" name="dmm"/>
         # and specifies where the equipment registers are and the connections file.
         cfg = Config("config.xml")
         equipment = cfg.equipment["dmm"]

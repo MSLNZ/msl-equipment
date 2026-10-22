@@ -3564,7 +3564,7 @@ def test_register_get_some(item: str | int, eid: str) -> None:
 def test_equipment_connection_none() -> None:
     connections.clear()
 
-    with pytest.raises(KeyError, match=r"eid='MSLE.O.231' cannot be found"):
+    with pytest.raises(KeyError, match=r"id='MSLE.O.231' cannot be found"):
         _ = Equipment(id="MSLE.O.231").connect()
 
     connections.add(*("tests/data/connections.xml",))

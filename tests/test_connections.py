@@ -25,7 +25,7 @@ def test_from_config() -> None:
     assert connections["MSLE.O.061"].address == "TCP::192.168.1.100::5000"
     assert connections["MSLE.O.061"].properties == {}
 
-    assert connections["MSLE.O.023"].eid == "MSLE.O.023"
+    assert connections["MSLE.O.023"].id == "MSLE.O.023"
     assert connections["MSLE.O.023"].address == "ASRL/dev/ttyS1"
     assert connections["MSLE.O.023"].backend.value == "PyVISA"
     assert connections["MSLE.O.023"].manufacturer == "Manufacturer"
@@ -41,9 +41,9 @@ def test_from_config() -> None:
         "empty": None,
     }
 
-    assert str(connections["MSLE.M.092"]) == "Connection(eid='MSLE.M.092', address='COM1')"
+    assert str(connections["MSLE.M.092"]) == "Connection(id='MSLE.M.092', address='COM1')"
 
-    with pytest.raises(KeyError, match=r"eid='unknown' cannot be found"):
+    with pytest.raises(KeyError, match=r"id='unknown' cannot be found"):
         _ = connections["unknown"]
 
 
@@ -61,7 +61,7 @@ def test_properties() -> None:
 def test_from_xml() -> None:
     text = r"""
         <connection>
-            <eid>A</eid>
+            <id>A</id>
             <address>B</address>
             <backend>MSL</backend>
             <manufacturer>C</manufacturer>
@@ -79,7 +79,7 @@ def test_from_xml() -> None:
     """
 
     c = connections._from_xml(XML(text))  # pyright: ignore[reportPrivateUsage]  # noqa: SLF001
-    assert c.eid == "A"
+    assert c.id == "A"
     assert c.address == "B"
     assert c.backend == Backend.MSL
     assert c.manufacturer == "C"

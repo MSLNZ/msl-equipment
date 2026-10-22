@@ -589,7 +589,7 @@ async def test_recalibrations(tmp_path: Path) -> None:
 
     today = date.today()  # noqa: DTZ011
     plus_3_months = today + timedelta(days=90)
-    previous = plus_3_months.replace(today.year - 2)
+    previous = plus_3_months.replace(plus_3_months.year - 2)
 
     light = tmp_path / "light"
     light.mkdir()
@@ -894,7 +894,10 @@ async def test_search(tmp_path: Path) -> None:
     cfg.registers.append(EquipmentRegister("Light", light))
 
     table, is_valid, synced, error = await utils.search(
-        teams=["Temperature", "Mass", "Light"], text="Spectrophotometer", sync=True
+        teams=["Temperature", "Mass", "Light"],
+        text="Spectrophotometer",
+        sync=True,
+        ignore_case=False,
     )
     assert error == ""
     assert synced

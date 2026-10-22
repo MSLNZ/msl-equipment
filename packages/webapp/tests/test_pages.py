@@ -117,16 +117,16 @@ def test_recalibrations_layout(kwargs: dict[str, str], teams: list[str], months:
 
 
 @pytest.mark.parametrize(
-    ("kwargs", "teams", "text", "sync"),
+    ("kwargs", "teams", "text", "sync", "ignore_case"),
     [
-        ({}, [], "", False),
-        ({"text": "Foo%7CBar"}, [], "Foo|Bar", False),
-        ({"text": ".", "sync": "False"}, [], ".", False),
-        ({"team": "Unknown", "text": "hello%20world", "sync": "True"}, [], "hello world", True),
-        ({"team": "Light", "sync": "yes"}, ["Light"], "", True),
+        ({}, [], "", False, True),
+        ({"text": "Foo%7CBar"}, [], "Foo|Bar", False, True),
+        ({"text": ".", "sync": "False", "ignoreCase": "off"}, [], ".", False, False),
+        ({"team": "Unknown", "text": "hello%20world", "sync": "True"}, [], "hello world", True, True),
+        ({"team": "Light", "sync": "yes", "ignoreCase": "1"}, ["Light"], "", True, True),
     ],
 )
-def test_search_layout(kwargs: dict[str, str], teams: list[str], text: str, sync: bool) -> None:  # noqa: FBT001
+def test_search_layout(kwargs: dict[str, str], teams: list[str], text: str, sync: bool, ignore_case: bool) -> None:  # noqa: FBT001
     cfg.registers.clear()
     cfg.registers.append(EquipmentRegister(team="Light", directory=Path("tests/data/light")))
 
@@ -139,9 +139,13 @@ def test_search_layout(kwargs: dict[str, str], teams: list[str], text: str, sync
     assert _input.id == "search-input"
     assert _input.value == text
 
-    checkbox = div.children[0].children[3].children.children[1]
-    assert checkbox.id == "search-sync-checkbox"
-    assert checkbox.value is sync
+    sync_checkbox = div.children[0].children[3].children[0].children.children[1]
+    assert sync_checkbox.id == "search-sync-checkbox"
+    assert sync_checkbox.value is sync
+
+    case_checkbox = div.children[0].children[3].children[1].children.children[1]
+    assert case_checkbox.id == "search-ignore-case-checkbox"
+    assert case_checkbox.value is ignore_case
 
 
 @pytest.mark.anyio
@@ -246,7 +250,7 @@ async def test_update_table(mod: ModuleType) -> None:
 
 @pytest.mark.anyio
 async def test_search_update_table_invalid_regex() -> None:
-    href, show, child = await search.update_table([], "*", True, scope, "http://localhost/search")  # noqa: FBT003
+    href, show, child = await search.update_table(["any"], "*", True, True, scope, "http://localhost/search")  # noqa: FBT003
     assert href == "http://localhost/search"  # input returned unchanged
     assert show
     assert child is not None
@@ -255,7 +259,7 @@ async def test_search_update_table_invalid_regex() -> None:
 
 @pytest.mark.anyio
 async def test_search_update_table_teams_empty() -> None:
-    href, show, child = await search.update_table([], "any", True, scope, "http://localhost/search")  # noqa: FBT003
+    href, show, child = await search.update_table([], "any", True, True, scope, "http://localhost/search")  # noqa: FBT003
     assert href == "http://localhost/search"  # input returned unchanged
     assert not show
     assert child is None
@@ -263,7 +267,7 @@ async def test_search_update_table_teams_empty() -> None:
 
 @pytest.mark.anyio
 async def test_search_update_table_text_empty() -> None:
-    href, show, child = await search.update_table(["Light"], "", True, scope, "http://localhost/search")  # noqa: FBT003
+    href, show, child = await search.update_table(["Light"], "", True, True, scope, "http://localhost/search")  # noqa: FBT003
     assert href == "http://localhost/search"  # input returned unchanged
     assert not show
     assert child is None
@@ -274,8 +278,8 @@ async def test_search_update_table() -> None:
     cfg.registers.clear()
     cfg.registers.append(EquipmentRegister(team="Light", directory=Path("tests/data/light")))
 
-    href, show, child = await search.update_table(["Light"], "foo bar", False, scope, "http://localhost/search")  # noqa: FBT003
-    assert href == "http://localhost/search?team=Light&text=foo%20bar&sync=false"
+    href, show, child = await search.update_table(["Light"], "foo bar", False, True, scope, "http://localhost/search")  # noqa: FBT003
+    assert href == "http://localhost/search?team=Light&text=foo%20bar&sync=false&ignoreCase=true"
     assert not show
     assert child is None
 

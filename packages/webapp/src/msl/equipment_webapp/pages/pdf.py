@@ -218,7 +218,7 @@ def upload_extra(
     Output("pdf-extra", "data"),
     Input("pdf-clear-button", "n_clicks"),
 )
-async def clear_extra(_n_clicks: int) -> dict[str, str]:  # type: ignore[misc]
+async def clear_extra(_n_clicks: int) -> dict[str, str]:
     """Clear all extra files.
 
     Args:

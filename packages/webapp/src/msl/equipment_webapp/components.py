@@ -189,6 +189,7 @@ def team_dropdown(*, page: str, value: list[str]) -> Component:
                 debounce=True,
                 persistence=True,
                 persistence_type="session",  # value kept on page reload, but cleared when browser closed
+                maxHeight=400,
             ),
         ],
         width="auto",

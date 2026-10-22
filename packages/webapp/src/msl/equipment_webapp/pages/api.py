@@ -57,7 +57,7 @@ class Table(BaseModel):
     description=dedent(f"""
     Get equipment that are capital assets.
 
-    Example Python script (requires the [requests](https://pypi.org/project/requests/) package):
+    Example Python script (requires the [requests](https://pypi.org/project/requests/) package).
 
     ```python
     import requests
@@ -90,7 +90,7 @@ async def assets(
     description=dedent(f"""
     Find equipment that has planned maintenance.
 
-    Example Python script (requires the [requests](https://pypi.org/project/requests/) package):
+    Example Python script (requires the [requests](https://pypi.org/project/requests/) package).
 
     ```python
     import requests
@@ -124,7 +124,7 @@ async def maintenance(
     description=dedent(f"""
     Find equipment that must be recalibrated.
 
-    Example Python script (requires the [requests](https://pypi.org/project/requests/) package):
+    Example Python script (requires the [requests](https://pypi.org/project/requests/) package).
 
     ```python
     import requests
@@ -158,7 +158,7 @@ async def recalibrations(
     description=dedent(f"""
     Search for equipment.
 
-    Example Python script (requires the [requests](https://pypi.org/project/requests/) package):
+    Example Python script (requires the [requests](https://pypi.org/project/requests/) package).
 
     ```python
     import requests
@@ -176,9 +176,14 @@ async def search(
         str, Query(description="The text to search for (supports a [regular-expression pattern](https://regexr.com/))")
     ],
     sync: Sync = False,
+    ignore_case: Annotated[
+        bool, Query(description="Whether to perform a case-insensitive search.", alias="ignoreCase")
+    ] = True,
 ) -> Table:
     """Search for equipment."""
-    data, is_valid, synced, error = await utils.search(teams=[t.value for t in team], text=text, sync=sync)
+    data, is_valid, synced, error = await utils.search(
+        teams=[t.value for t in team], text=text, sync=sync, ignore_case=ignore_case
+    )
     if error:
         raise HTTPException(status_code=400, detail=error)
 
@@ -200,7 +205,7 @@ ext = [f"`{e}`" for e in utils.CONVERT_EXTENSIONS]
     description=dedent(f"""
     Create a PDF/A-3 document (with embedded attachments).
 
-    Example Python script (requires the [requests](https://pypi.org/project/requests/) package):
+    Example Python script (requires the [requests](https://pypi.org/project/requests/) package).
 
     ```python
     import requests

@@ -1307,6 +1307,59 @@ def test_table_single_value() -> None:
     )
 
 
+@pytest.mark.parametrize(
+    "value",
+    [
+        "nan",
+        "NaN",
+        "NAN",
+        "inf",
+        "+inf",
+        "infinity",
+        "+Inf",
+        "Inf",
+        "+INF",
+        "+INFINITY",
+        "-inf",
+        "-infinity",
+        "-Inf",
+        "-INF",
+        "-Infinity",
+        "-INFINITY",
+    ],
+)
+def test_table_double_nan_inf_ok(value: str) -> None:
+    text = f"""
+    <table>
+        <type> int, double, string </type>
+        <unit> nm, W*m^(-2), none </unit>
+        <header> W, I, s</header>
+        <data>
+            250, 0.01818, A
+            300, 0.18478, B
+            350, {value}, c
+            400, 2.21355, d
+        </data>
+    </table>
+    """
+    t = Table.from_xml(XML(text))
+    assert t.comment == ""
+    assert np.array_equal(t.units.tolist(), ["nm", "W*m^(-2)", "none"])
+    assert t.units["W"] == "nm"
+    assert t.units["I"] == "W*m^(-2)"
+    assert t.units["s"] == "none"
+    assert np.array_equal(t.header, ["W", "I", "s"])
+    assert t.types["W"] == np.dtype(dtype=int)
+    assert t.types["I"] == np.dtype(dtype=float)
+    assert t.types["s"] == np.dtype(dtype=object)
+    assert np.array_equal(t["W"], [250, 300, 350, 400])
+    assert np.array_equal(t[2].tolist(), [350, float(value), "c"])  # type: ignore[arg-type]
+    assert t.dtype.names is not None
+    assert np.array_equal(t.dtype.names, t.header)
+    assert t.units.dtype.names is not None
+    assert np.array_equal(t.units.dtype.names, t.header)
+
+
 def test_cvd() -> None:
     text = """
         <cvdCoefficients comment="My favourite PRT">

@@ -58,7 +58,7 @@ def layout(**kwargs: str) -> html.Div:
     Input(f"{PAGE}-months-input", "value"),
     prevent_initial_call=True,
 )
-async def check_months_range(value: int | None) -> bool:  # type: ignore[misc]
+async def check_months_range(value: int | None) -> bool:
     """Check if the months value is out of range."""
     return value is None
 
@@ -68,7 +68,7 @@ async def check_months_range(value: int | None) -> bool:  # type: ignore[misc]
     Input(f"{PAGE}-download-button", "n_clicks"),
     prevent_initial_call=True,
 )
-async def export_data_as_csv(n_clicks: int) -> bool:  # type: ignore[misc]
+async def export_data_as_csv(n_clicks: int) -> bool:
     """Export the data in the table as a CSV file."""
     return n_clicks > 0
 
@@ -88,7 +88,7 @@ async def export_data_as_csv(n_clicks: int) -> bool:  # type: ignore[misc]
     persistent=True,
     websocket=True,
 )
-async def update_table(teams: list[str], months: int | None, sync: bool, scope: Scope, href: str) -> str:  # type: ignore[misc]  # noqa: FBT001
+async def update_table(teams: list[str], months: int | None, sync: bool, scope: Scope, href: str) -> str:  # noqa: FBT001
     """Update the table data."""
     log_buffer: deque[str] = deque()
 

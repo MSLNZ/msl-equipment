@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from .high_finesse import HighFinesse, high_finesse_callback
+from .wlm import HighFinesse, high_finesse_callback
 
 __all__: list[str] = [
     "HighFinesse",

@@ -11,39 +11,32 @@ if TYPE_CHECKING:
 
 # Assumes the `wlmData.dll` library is available on the PATH environment variable
 # Update the `serial` value for your device
-# c = Connection("SDK::wlmData", manufacturer="HighFinesse", serial="709")
-c = Connection(
-    r"SDK::D:\SDKs\HighFinesse\Wavelength Meter WS5 709\x86\wlmData",
-    manufacturer="HighFinesse",
-    serial="709",
-)
+c = Connection("SDK::wlmData", manufacturer="HighFinesse", serial="709")
 
-# Connect to the wavelength meter
+# Connect to the Wavelength Meter
 w: HighFinesse = c.connect()
 
 # Make sure the High Finesse software is running (you must update the executable path)
 w.run_software(f"C:/Program Files (x86)/HighFinesse/Wavelength Meter WS5 {c.serial}/wlm_ws5.exe")
 print(w.version_info())
+print(f"Auto exposure enabled? {w.auto_exposure_enabled}")
+print("Exposure time =", w.get_exposure_time(), "ms")
+print(f"Pulsed mode? {w.pulsed}")
+print(f"Precision {w.precision!r}")
 
-_ = input("Press ENTER when the HighFinesse software has finished loading ")
-print(w.auto_exposure_state)
-w.auto_exposure_state = not w.auto_exposure_state
-print(w.auto_exposure_state)
-
-print(w.get_exposure_time())
-w.set_exposure_time(10)
-print(w.get_exposure_time())
-
-_ = input("Press ENTER to start a measurement ")
+_ = input("Press ENTER to start a measurement (wait for the software window to finish loading) ")
 w.start_measurement()
 
-_ = input("Press ENTER to fetch the wavelength and temperature ")
-wavelength = w.wavelength()
-print(wavelength, "nm")
-print(w.convert_unit(wavelength, w.WLMUnit.PhotonEnergy), "eV")
-print(w.temperature(), "°C")
-print(w.interferometer_data(0))
+# Use fine precision
+w.precision = w.Precision.Fine
 
-# Disconnect from the wavelength meter
+# Wait for a valid wavelength to be measured and for the exposure time to be stable for 2 seconds
+w.wait(2)
+
+print("Wavelength", w.wavelength(), "nm")
+print("Wavelength", w.wavelength(w.Unit.PhotonEnergy), "eV")
+print("Temperature", w.temperature, "°C")
+
+# Disconnect from the Wavelength Meter
 w.stop_measurement()
 w.disconnect()

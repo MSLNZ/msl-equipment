@@ -149,6 +149,7 @@ class WLMDataServer(Server32):
             ("GetFrequency2", c_double, (c_double,)),
             ("GetFrequencyNum", c_double, (c_long, c_double)),
             ("GetLinewidth", c_double, (c_long, c_double)),
+            ("GetPressure", c_double, (c_double,)),
             ("Operation", c_long, (c_ushort,)),
             ("ConvertUnit", c_double, (c_double, c_long, c_long)),
             ("Instantiate", c_void_p, (c_long, c_long, c_void_p, c_long)),
@@ -163,6 +164,16 @@ class WLMDataServer(Server32):
                 continue
             fcn.argtypes = args
             fcn.restype = res
+
+    def control_wlm(self, action: int, path: bytes) -> int:
+        """Start, hide or terminate the WLM server application."""
+        r: int = self.lib.ControlWLM(action, create_string_buffer(path), 0)
+        return r
+
+    def convert_unit(self, value: float, frm: int, to: int) -> float:
+        """Convert a value into a representation of another unit."""
+        v: float = self.lib.ConvertUnit(value, frm, to)
+        return v
 
     def get_analysis_mode(self) -> bool:
         """Get analysis mode state."""
@@ -179,15 +190,29 @@ class WLMDataServer(Server32):
         r: int = self.lib.GetExposureNum(channel, index, 0)  # last argument is reserved for future use
         return r
 
-    def control_wlm(self, action: int, path: bytes) -> int:
-        """Start, hide or terminate the WLM server application."""
-        r: int = self.lib.ControlWLM(action, create_string_buffer(path), 0)
-        return r
+    def get_linewidth(self, unit: int) -> float:
+        """Returns the linewidth in the specified measurement unit."""
+        value: float = self.lib.GetLinewidth(unit, 0.0)  # last argument is reserved for future use
+        return value
 
-    def convert_unit(self, value: float, frm: int, to: int) -> float:
-        """Convert a value into a representation of another unit."""
-        v: float = self.lib.ConvertUnit(value, frm, to)
-        return v
+    def get_linewidth_mode(self) -> bool:
+        """Whether linewidth mode is enabled or disabled."""
+        return bool(self.lib.GetLinewidthMode(0))  # input argument is reserved for future use
+
+    def get_pressure(self) -> float:
+        """Returns the pressure (in mbar) inside the device."""
+        p: float = self.lib.GetPressure(0)  # input argument is reserved for future use
+        return p
+
+    def get_pulse_mode(self) -> int:
+        """Returns the pulse mode."""
+        m: int = self.lib.GetPulseMode(0)  # input argument is reserved for future use
+        return m
+
+    def get_range(self) -> int:
+        """Returns the wavelength range or range model that is selected."""
+        r: int = self.lib.GetRange(0)  # input argument is reserved for future use
+        return r
 
     def get_temperature(self) -> float:
         """Returns the temperature inside the device, in Celsius."""
@@ -198,6 +223,11 @@ class WLMDataServer(Server32):
         """Returns the vacuum wavelength (in nm)."""
         w: float = self.lib.GetWavelengthNum(number, 0.0)  # second argument is reserved for future use
         return w
+
+    def get_wide_mode(self) -> int:
+        """Returns the measurement precision mode."""
+        m: int = self.lib.GetWideMode(0)  # input argument is reserved for future use
+        return m
 
     def get_wlm_count(self) -> int:
         """Returns the number of wavelength meter and spectrum-analyser applications that are running."""
@@ -244,6 +274,30 @@ class WLMDataServer(Server32):
         t: int = self.lib.SetExposureNum(channel, index, ms)
         return t
 
+    def set_linewidth_mode(self, enabled: bool) -> int:  # noqa: FBT001
+        """Set the linewidth mode to either enabled or disabled."""
+        m: int = self.lib.SetLinewidthMode(enabled)
+        return m
+
+    def set_pulse_mode(self, mode: int) -> int:
+        """Set the pulse mode (0=CW, 1=Pulsed)."""
+        m: int = self.lib.SetPulseMode(mode)
+        return m
+
+    def set_range(self, value: int) -> int:
+        """Set the wavelength range or range model."""
+        r: int = self.lib.SetRange(value)
+        return r
+
+    def set_wide_mode(self, mode: int) -> int:
+        """Set the measurement precision mode.
+
+        Args:
+            mode: The precision mode (e.g., 0=fine, 1=wide, 2=grating analysis).
+        """
+        m: int = self.lib.SetWideMode(mode)
+        return m
+
 
 class WLMData(Client64):
     """Wrapper around the wlmData library from HighFinesse."""
@@ -257,41 +311,63 @@ class WLMData(Client64):
 
     def control_wlm(self, *, action: int, path: bytes) -> int:
         """Start, hide or terminate the WLM server application."""
-        r: int = self.request32("control_wlm", action, path)
-        return r
+        return check(self.request32("control_wlm", action, path))
 
-    def convert_unit(self, *, value: float, frm: int, to: int) -> float:
+    def convert_unit(self, *, value: float, current: int, to: int) -> float:
         """Convert a value into a representation of another unit."""
-        return check(self.request32("convert_unit", value, frm, to))
+        return check(self.request32("convert_unit", value, current, to))
 
     def get_analysis_mode(self) -> bool:
         """Get analysis mode state."""
-        m: bool = self.request32("get_analysis_mode")
-        return m
+        return bool(check(self.request32("get_analysis_mode")))
 
     def get_exposure_mode(self) -> bool:
         """Get auto-exposure mode state."""
-        m: bool = self.request32("get_exposure_mode")
-        return m
+        return bool(check(self.request32("get_exposure_mode")))
 
     def get_exposure_num(self, *, channel: int, index: int) -> int:
         """Returns the exposure time (in ms)."""
         return check(self.request32("get_exposure_num", channel, index))
 
+    def get_linewidth(self, unit: int) -> float:
+        """Whether linewidth mode is enabled or disabled."""
+        value = check(self.request32("get_linewidth", unit))
+        if value == 0:
+            msg = "The linewidth has a value of 0. Make sure you have enabled linewidth mode"
+            raise RuntimeError(msg)
+        return value
+
+    def get_linewidth_mode(self) -> bool:
+        """Whether linewidth mode is enabled or disabled."""
+        return bool(check(self.request32("get_linewidth_mode")))
+
+    def get_pressure(self) -> float:
+        """Returns the pressure (in mbar) inside the device."""
+        return check(self.request32("get_pressure"))
+
+    def get_pulse_mode(self) -> bool:
+        """Returns the pulse mode (False:CW, True:Pulsed)."""
+        return bool(check(self.request32("get_pulse_mode")))
+
+    def get_range(self) -> int:
+        """Returns the wavelength range or range model that is selected."""
+        return check(self.request32("get_range"))
+
     def get_temperature(self) -> float:
         """Returns the temperature inside the device, in Celsius."""
-        t: float = check(self.request32("get_temperature"))
-        return t
+        return check(self.request32("get_temperature"))
 
     def get_wavelength_num(self, number: int) -> float:
         """Returns the vacuum wavelength (in nm)."""
-        w: float = check(self.request32("get_wavelength_num", number))
-        return w
+        return check(self.request32("get_wavelength_num", number))
+
+    def get_wide_mode(self) -> int:
+        """Returns the measurement precision mode."""
+        return check(self.request32("get_wide_mode"))
 
     def get_wlm_count(self) -> int:
         """Returns the number of wavelength meter and spectrum-analyser applications that are running."""
-        count: int = self.request32("get_wlm_count")
-        return count
+        return check(self.request32("get_wlm_count"))
 
     def get_wlm_version(self) -> list[int]:
         """Returns version information about the device."""
@@ -300,8 +376,7 @@ class WLMData(Client64):
 
     def instantiate(self, *, rfc: int, mode: int, p1: Any, p2: int) -> int:  # noqa: ANN401
         """Instantiate the device."""
-        r: int = self.request32("instantiate", rfc, mode, p1, p2)
-        return r
+        return check(self.request32("instantiate", rfc, mode, p1, p2))
 
     def interferometer_data(self, *, index: int, channel: int) -> list[int]:
         """Get the interferometer pattern data."""
@@ -323,3 +398,23 @@ class WLMData(Client64):
     def set_exposure_time(self, *, ms: int, channel: int, index: int) -> None:
         """Set the exposure time (in ms)."""
         _ = check_set(self.request32("set_exposure_time", ms, channel, index))
+
+    def set_linewidth_mode(self, *, enabled: bool) -> None:
+        """Set the linewidth mode to either enabled or disabled."""
+        _ = check_set(self.request32("set_linewidth_mode", enabled))
+
+    def set_pulse_mode(self, mode: int) -> None:
+        """Set the pulse mode (0=CW, 1=Pulsed)."""
+        _ = check_set(self.request32("set_pulse_mode", mode))
+
+    def set_range(self, value: int) -> None:
+        """Set the wavelength range or range model."""
+        _ = check_set(self.request32("set_range", value))
+
+    def set_wide_mode(self, mode: int) -> None:
+        """Set the measurement precision mode.
+
+        Args:
+            mode: The precision mode (e.g., 0=fine, 1=wide, 2=grating analysis).
+        """
+        _ = check_set(self.request32("set_wide_mode", mode))

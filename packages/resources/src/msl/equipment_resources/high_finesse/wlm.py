@@ -5,14 +5,14 @@ from __future__ import annotations
 
 import os
 from enum import IntEnum
-from time import sleep
+from time import perf_counter, sleep
 from typing import TYPE_CHECKING, NamedTuple
 
 import numpy as np
 
 from msl.equipment.schema import Interface
 
-from .wlm_data import Callback, WLMData
+from .wlm_wrapper import Callback, WLMData
 
 if TYPE_CHECKING:
     from ctypes import _CFunctionType  # pyright: ignore[reportPrivateUsage]
@@ -37,8 +37,8 @@ def high_finesse_callback(f: HighFinesseCallback) -> _CFunctionType:
 class HighFinesse(Interface, manufacturer=r"High\s*Finesse"):
     """Connect to a Wavelength Meter or Laser Spectrum Analyser from [HighFinesse](https://www.highfinesse.com/)."""
 
-    class WLMUnit(IntEnum):
-        """HighFinesse measurement units.
+    class Unit(IntEnum):
+        """Measurement unit.
 
         Attributes:
             Vacuum (int): 0 (nm)
@@ -54,41 +54,28 @@ class HighFinesse(Interface, manufacturer=r"High\s*Finesse"):
         Wavenumber = 3
         PhotonEnergy = 4
 
-    class Range(IntEnum):
-        """Wavelength ranges.
+    class Precision(IntEnum):
+        """Precision mode.
 
         Attributes:
-            nm245_325 (int): `0`
-            nm320_420 (int): `1`
-            nm410_610 (int): `2`
-            nm600_1190 (int): `3`
+            Fine (int): For fine lasers with full precision, `0`
+            Wide (int): For wide line lasers with less accuracy, `1`
+            Grating (int): For grating analysis, `2`
         """
 
-        nm245_325 = 0
-        nm320_420 = 1
-        nm410_610 = 2
-        nm600_1190 = 3
-
-    class RangeModel(IntEnum):
-        """Measurement range model constants.
-
-        Attributes:
-            Wavelength (int): `65533`
-            Order (int): `65534`
-            Old (int): `65535`
-        """
-
-        Wavelength = 65533
-        Order = 65534
-        Old = 65535
+        Fine = 0
+        Wide = 1
+        Grating = 2
 
     def __init__(self, equipment: Equipment) -> None:
-        r"""Connect to a Wavelength Meter or Laser Spectrum Analyser from [HighFinesse](https://www.highfinesse.com/).
+        r"""Control a Wavelength Meter or Laser Spectrum Analyser from [HighFinesse](https://www.highfinesse.com/).
+
+        Loads the `wlmData` library to control the device.
 
         Regular-expression patterns that are used to select this Resource when
         [connect()][msl.equipment.schema.Equipment.connect] is called.
         ```python
-        manufacturer=r""High\s*Finesse"
+        manufacturer=r"High\s*Finesse"
         ```
 
         Args:
@@ -107,40 +94,42 @@ class HighFinesse(Interface, manufacturer=r"High\s*Finesse"):
                 raise
             self._wlm = WLMData(host="127.0.0.1", path=path)  # assume 32-bit library
 
+        self._set_range_model: bool = True
+
     @property
-    def analysis_mode_state(self) -> bool:
-        """Get/set whether the Laser Spectrum Analyser's analysis mode state is enabled or disabled."""
+    def analysis_mode_enabled(self) -> bool:
+        """Get/set whether the Analysis Mode is enabled or disabled."""
         return self._wlm.get_analysis_mode()
 
-    @analysis_mode_state.setter
-    def analysis_mode_state(self, mode: bool) -> None:
+    @analysis_mode_enabled.setter
+    def analysis_mode_enabled(self, mode: bool) -> None:
         self._wlm.set_analysis_mode(mode)
 
     @property
-    def auto_exposure_state(self) -> bool:
-        """Get/set whether the auto-exposure state is enabled or disabled."""
+    def auto_exposure_enabled(self) -> bool:
+        """Get/set whether the auto-exposure time is enabled or disabled."""
         return self._wlm.get_exposure_mode()
 
-    @auto_exposure_state.setter
-    def auto_exposure_state(self, mode: bool) -> None:
+    @auto_exposure_enabled.setter
+    def auto_exposure_enabled(self, mode: bool) -> None:
         self._wlm.set_exposure_mode(mode)
 
-    def convert_unit(self, value: float, to: WLMUnit | int, frm: WLMUnit | int = WLMUnit.Vacuum) -> float:
-        """Convert a value into a representation of another unit.
+    def convert(self, value: float, to: Unit | int, current: Unit | int = Unit.Vacuum) -> float:
+        """Convert a value from one measurement unit into another unit.
 
         Args:
             value: The value to convert. Must be &ge;0.
             to: The unit to convert `value` to.
-            frm: The unit that `value` is currently in.
+            current: The unit that `value` is currently in.
 
         Returns:
             The `value` in the converted unit.
         """
         # must convert IntEnum to int when loading the 32-bit library in 64-bit Python
-        return self._wlm.convert_unit(value=value, frm=int(frm), to=int(to))
+        return self._wlm.convert_unit(value=value, current=int(current), to=int(to))
 
     def disconnect(self) -> None:  # pyright: ignore[reportImplicitOverride]
-        """Clean up the library resources."""
+        """Clean up the `wlmData` library resources."""
         if hasattr(self, "_wlm"):
             _ = self._wlm.shutdown_server32()
         return super().disconnect()
@@ -159,21 +148,44 @@ class HighFinesse(Interface, manufacturer=r"High\s*Finesse"):
         """
         return self._wlm.get_exposure_num(channel=channel, index=index)
 
-    def interferometer_data(self, index: int, channel: int = 1) -> NDArray[np.uint16]:
+    def linewidth(self, unit: Unit | int = Unit.Vacuum) -> float:
+        """Get the linewidth (or the width in `Wide` precision).
+
+        Args:
+            unit: The measurement unit to return the value in.
+
+        Returns:
+            The linewidth in the specified measurement unit.
+        """
+        # must convert IntEnum to int when loading the 32-bit library in 64-bit Python
+        return self._wlm.get_linewidth(int(unit))
+
+    @property
+    def linewidth_enabled(self) -> bool:
+        """Get/set whether measuring the linewidth (or the width in `Wide` precision) is enabled or disabled."""
+        return self._wlm.get_linewidth_mode()
+
+    @linewidth_enabled.setter
+    def linewidth_enabled(self, enabled: bool) -> None:
+        self._wlm.set_linewidth_mode(enabled=enabled)
+
+    def interferometer_data(self, index: int = 0, channel: int = 1) -> NDArray[np.uint16]:
         """Get the interferometer pattern data.
 
         Args:
             index: The index of the data type to receive.
 
-                * 0 - Fizeau interferometers or diffraction grating
-                * 1 - Additional long interferometer or grating analysing versions (spectrum analysis)
-                * 2 - Fizeau interferometers that support double pulses
-                * 3 - Additional interferometer for second pulse
+                * 0 &mdash; Fizeau interferometers or diffraction grating
+                * 1 &mdash; Additional long interferometer or grating analysing versions (spectrum analysis)
+                * 2 &mdash; Fizeau interferometers that support double pulses
+                * 3 &mdash; Additional interferometer for second pulse
 
             channel: Identifies the switcher channel number. Devices without a switcher must use 1.
 
         Returns:
-            The interferometer pattern data. If all values in the array are zero, try calling this method again.
+            The interferometer pattern data. If all values in the returned array are zero, call this
+                method again since it may take additional time for the data to be copied to the output
+                buffer.
         """
         return np.array(self._wlm.interferometer_data(index=index, channel=channel), dtype=np.uint16)
 
@@ -187,17 +199,40 @@ class HighFinesse(Interface, manufacturer=r"High\s*Finesse"):
         """
         return self._wlm.operation(mode)
 
+    @property
+    def pulsed(self) -> bool:
+        """Get/set whether pulsed (`True`) or continuous (`False`) mode is active."""
+        return self._wlm.get_pulse_mode()
+
+    @pulsed.setter
+    def pulsed(self, value: bool) -> None:
+        self._wlm.set_pulse_mode(int(value))
+
+    @property
+    def precision(self) -> Precision:
+        """Get/set the precision mode."""
+        return self.Precision(self._wlm.get_wide_mode())
+
+    @precision.setter
+    def precision(self, mode: Precision) -> None:
+        self._wlm.set_wide_mode(int(mode))
+
+    @property
+    def pressure(self) -> float:
+        """Get the pressure (in mbar) inside the device."""
+        return self._wlm.get_pressure()
+
     def run_software(self, path: PathLike, *, wait: bool = True) -> None:
         """Run the HighFinesse application software.
 
-        It is okay to call this method if the software is already running.
+        It is okay to call this method if the software is already running, only one application will run.
 
         !!! warning
             The HighFinesse application software must be running for the SDK functions to work properly.
 
         Args:
             path: The path to the HighFinesse executable for the application software,
-                e.g., `"C:/Program Files (x86)/HighFinesse/Wavelength Meter WS5 <SERIAL#>/wlm_ws5.exe"`
+                e.g., `"C:/Program Files (x86)/HighFinesse/Wavelength Meter WS5/wlm_ws5.exe"`
             wait: Whether to wait for the software to perform its initialisation before returning
                 to the calling program. The device may still not be ready to get/set parameters
                 when this method returns.
@@ -212,6 +247,17 @@ class HighFinesse(Interface, manufacturer=r"High\s*Finesse"):
                 if self._wlm.get_wlm_count() > 0:
                     return
                 sleep(1)
+
+    def select_wavelength_range(self, nm: float) -> None:
+        """Select the appropriate wavelength range to accommodate the specified wavelength.
+
+        Args:
+            nm: The approximate wavelength (in nm) that you expect to measure.
+        """
+        if self._set_range_model:
+            self._wlm.set_range(65533)  # cRangeModelByWavelength
+            self._set_range_model = False
+        self._wlm.set_range(round(nm))
 
     def set_callback(self, function: HighFinesseCallback | None, priority: int = 2) -> None:
         """Set a callback function.
@@ -241,42 +287,95 @@ class HighFinesse(Interface, manufacturer=r"High\s*Finesse"):
         """Set the exposure time (in ms).
 
         Args:
-            ms: The exposure time, in ms.
-            index: The CCD array index for devices with more than one CCD array.
-                Can be 1 or 2. For devices with only one CCD array set the
-                value to be 1.
+            ms: The exposure time (in ms).
+            index: The CCD array index for devices with more than one CCD array. Can
+                be 1 or 2. For devices with only one CCD array set the value to be 1.
             channel: The signal channel for devices with a multichannel switcher.
                 Should be set to 1 for devices that do not have this option.
         """
         self._wlm.set_exposure_time(ms=ms, channel=channel, index=index)
 
     def start_measurement(self) -> None:
-        """Start measurement."""
+        """Start a measurement."""
         _ = self.operation(2)  # cCtrlStartMeasurement
 
     def stop_measurement(self) -> None:
-        """Stop measurement."""
+        """Stop the measurement."""
         _ = self.operation(0)  # cCtrlStopAll
 
+    @property
     def temperature(self) -> float:
-        """Returns the temperature inside the device, in Celsius."""
+        """Get the temperature (in &deg;C) inside the device."""
         return self._wlm.get_temperature()
 
     def version_info(self) -> WLMVersionInfo:
         """Get the version information about the device."""
         return WLMVersionInfo(*self._wlm.get_wlm_version())
 
-    def wavelength(self, number: int = 0) -> float:
-        """Get the vacuum wavelength (in nm).
+    def wait(
+        self,
+        stable_for: float,
+        *,
+        timeout: float = 30,
+        index: int = 1,
+        channel: int = 1,
+        number: int = 0,
+    ) -> None:
+        """Wait for a valid wavelength to be measured and for the exposure time to be stable.
 
         Args:
+            stable_for: The number of seconds that the exposure time must be stable for.
+            timeout: The maximum number of seconds to wait.
+            index: The CCD array index for devices with more than one CCD array.
+                Can be 1 or 2. For devices with only one CCD array set the value to be 1.
+                Value passed to [get_exposure_time][..get_exposure_time].
+            channel: The signal channel for devices with a multichannel switcher.
+                Should be set to 1 for devices that do not have this option.
+                Value passed to [get_exposure_time][..get_exposure_time].
+            number: The signal number (1 to 8) if the device has a multichannel switcher or
+                contains the double-pulse option. For devices without these options set to 0.
+                Value passed to [wavelength][..wavelength].
+        """
+        previous = self.get_exposure_time(index=index, channel=channel)
+        t_stable = perf_counter()
+        t_start = t_stable
+        while True:
+            sleep(0.1)
+            t = perf_counter()
+
+            try:
+                _ = self.wavelength(number=number)
+            except RuntimeError:
+                t_stable = perf_counter()
+                continue
+
+            current = self.get_exposure_time(index=index, channel=channel)
+            if current != previous:
+                previous = current
+                t_stable = perf_counter()
+
+            if t - t_stable >= stable_for:
+                break
+
+            if t - t_start > timeout:
+                msg = f"Timeout after {timeout} seconds"
+                raise TimeoutError(msg)
+
+    def wavelength(self, unit: Unit | int = Unit.Vacuum, number: int = 0) -> float:
+        """Get the wavelength in the specified measurement unit.
+
+        Args:
+            unit: The measurement unit to return the value in.
             number: The signal number (1 to 8) if the device has a multichannel switcher or
                 contains the double-pulse option. For devices without these options set to 0.
 
         Returns:
-            The latest vacuum wavelength (in nm) that was measured.
+            The wavelength.
         """
-        return self._wlm.get_wavelength_num(number)
+        value = self._wlm.get_wavelength_num(number)
+        if unit != self.Unit.Vacuum:
+            return self.convert(value, to=unit)
+        return value
 
 
 class WLMVersionInfo(NamedTuple):

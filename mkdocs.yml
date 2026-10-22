@@ -131,6 +131,8 @@ nav:
       - resources/energetiq/eq99.md
     - Greisinger:
       - resources/greisinger/gmh3000.md
+    - HighFinesse:
+      - resources/high_finesse/wlm.md
     - Isotech:
       - resources/isotech/millik.md
     - MKS Instruments:

@@ -4,7 +4,7 @@
         <id>MSLE.M.092</id>
         <address>COM1</address>
     </connection>
-    <connection>
+    <connection alias="">
         <id>MSLE.M.001</id>
         <address>GPIB::22</address>
         <backend>MSL</backend>
@@ -14,7 +14,7 @@
         <address>TCPIP::dev.company.com::hislip0</address>
         <manufacturer/>
     </connection>
-    <connection>
+    <connection alias="shutter">
         <id>MSLE.O.231</id>
         <address>SDK::library.dll</address>
         <model/>
@@ -29,7 +29,7 @@
         <address>TCP::192.168.1.100::5000</address>
         <properties/>
     </connection>
-    <connection>
+    <connection alias="can be any text!">
         <id>MSLE.O.023</id>
         <address>ASRL/dev/ttyS1</address>
         <backend>PyVISA</backend>

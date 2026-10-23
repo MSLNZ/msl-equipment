@@ -22,11 +22,19 @@ def test_from_config() -> None:
     assert connections["MSLE.O.231"].address == "SDK::library.dll"
     assert connections["MSLE.O.103"].address == "TCPIP::192.168.1.100"
 
+    assert connections["MSLE.M.092"].alias == ""
+    assert connections["MSLE.M.001"].alias == ""
+    assert connections["MSLE.M.100"].alias == ""
+    assert connections["MSLE.O.231"].alias == "shutter"
+    assert connections["MSLE.O.103"].alias == ""
+
     assert connections["MSLE.O.061"].address == "TCP::192.168.1.100::5000"
     assert connections["MSLE.O.061"].properties == {}
+    assert connections["MSLE.O.061"].alias == ""
 
     assert connections["MSLE.O.023"].id == "MSLE.O.023"
     assert connections["MSLE.O.023"].address == "ASRL/dev/ttyS1"
+    assert connections["MSLE.O.023"].alias == "can be any text!"
     assert connections["MSLE.O.023"].backend.value == "PyVISA"
     assert connections["MSLE.O.023"].manufacturer == "Manufacturer"
     assert connections["MSLE.O.023"].model == "Model"
@@ -41,7 +49,8 @@ def test_from_config() -> None:
         "empty": None,
     }
 
-    assert str(connections["MSLE.M.092"]) == "Connection(id='MSLE.M.092', address='COM1')"
+    assert str(connections["MSLE.M.092"]) == "Connection(id='MSLE.M.092', address='COM1', alias='')"
+    assert str(connections["MSLE.O.231"]) == "Connection(id='MSLE.O.231', address='SDK::library.dll', alias='shutter')"
 
     with pytest.raises(KeyError, match=r"id='unknown' cannot be found"):
         _ = connections["unknown"]

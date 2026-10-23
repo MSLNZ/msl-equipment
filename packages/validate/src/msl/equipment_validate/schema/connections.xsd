@@ -70,6 +70,13 @@
                 </xsd:complexType>
               </xsd:element>
             </xsd:all>
+            <xsd:attribute name="alias" type="xsd:string">
+              <xsd:annotation>
+                <xsd:documentation>
+                  An alternative name to associate with the connection.
+                </xsd:documentation>
+              </xsd:annotation>
+            </xsd:attribute>
           </xsd:complexType>
         </xsd:element>
       </xsd:sequence>

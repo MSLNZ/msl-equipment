@@ -3102,6 +3102,7 @@ class Connection:
 
     __slots__: tuple[str, ...] = (
         "address",
+        "alias",
         "backend",
         "id",
         "manufacturer",
@@ -3114,6 +3115,7 @@ class Connection:
         self,
         address: str,
         *,
+        alias: str = "",
         backend: Literal["MSL", "PyVISA", "NIDAQ"] | Backend = Backend.MSL,
         id: str = "",  # noqa: A002
         manufacturer: str = "",
@@ -3125,6 +3127,7 @@ class Connection:
 
         Args:
             address: The VISA-style address of the connection (see [here][address-syntax] for examples).
+            alias: An alternative name to associate with the [Connection][] instance.
             backend: The [backend][msl.equipment.enumerations.Backend] to use to communicate with the equipment.
             id: The equipment [id][msl.equipment.schema.Equipment.id] to associate with the [Connection][] instance.
             manufacturer: The name of the manufacturer of the equipment.
@@ -3135,6 +3138,9 @@ class Connection:
         """
         self.address: str = address
         """The VISA-style address of the connection (see [here][address-syntax] for examples)."""
+
+        self.alias: str = alias
+        """The alternative name associated with the [Connection][] instance."""
 
         self.backend: Backend = Backend(backend)
         """The [backend][msl.equipment.enumerations.Backend] that is used to communicate with the equipment."""
@@ -3166,7 +3172,7 @@ class Connection:
 
     def __repr__(self) -> str:  # pyright: ignore[reportImplicitOverride]
         """Returns the string representation."""
-        return f"{self.__class__.__name__}(id={self.id!r}, address={self.address!r})"
+        return f"{self.__class__.__name__}(id={self.id!r}, address={self.address!r}, alias={self.alias!r})"
 
     def connect(self) -> _Any:  # noqa: ANN401
         """Connect to the equipment for computer control.
@@ -3182,6 +3188,7 @@ class Connection:
            that is supported by one of the [Interfaces][connections-interfaces], that Interface is used.
         """
         equipment = Equipment(
+            alias=self.alias,
             id=self.id,
             manufacturer=self.manufacturer,
             model=self.model,
@@ -3239,6 +3246,7 @@ class Connections:
         """Convert a <connection> from a connections XML file."""
         _id, address, backend, manufacturer, model, serial = "", "", Backend.MSL, "", "", ""
         properties: dict[str, bool | float | str | None] = {}
+        alias = element.get("alias", "")
         for e in element:
             tag, text = e.tag, e.text or ""
             if tag == "id":
@@ -3262,9 +3270,10 @@ class Connections:
                         properties[child.tag] = None if child.text is None else to_primitive(child.text)
 
         return Connection(
-            id=_id,
             address=address,
+            alias=alias,
             backend=backend,
+            id=_id,
             manufacturer=manufacturer,
             model=model,
             serial=serial,

@@ -5044,7 +5044,7 @@ features like code completion and type checking.</p>
 <div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">pyvisa</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">msl.equipment</span><span class="w"> </span><span class="kn">import</span> <span class="n">Config</span>
 
-<span class="c1"># config.xml contains &lt;equipment eid="MSLE.0.063" name="dmm"/&gt;</span>
+<span class="c1"># config.xml contains &lt;equipment id="MSLE.0.063" name="dmm"/&gt;</span>
 <span class="c1"># and specifies where the equipment registers are and the connections file.</span>
 <span class="n">cfg</span> <span class="o">=</span> <span class="n">Config</span><span class="p">(</span><span class="s2">"config.xml"</span><span class="p">)</span>
 <span class="n">equipment</span> <span class="o">=</span> <span class="n">cfg</span><span class="o">.</span><span class="n">equipment</span><span class="p">[</span><span class="s2">"dmm"</span><span class="p">]</span>
@@ -5217,7 +5217,7 @@ features like code completion and type checking.</p>
 <span class="sd">    import pyvisa</span>
 <span class="sd">    from msl.equipment import Config</span>
 
-<span class="sd">    # config.xml contains &lt;equipment eid="MSLE.0.063" name="dmm"/&gt;</span>
+<span class="sd">    # config.xml contains &lt;equipment id="MSLE.0.063" name="dmm"/&gt;</span>
 <span class="sd">    # and specifies where the equipment registers are and the connections file.</span>
 <span class="sd">    cfg = Config("config.xml")</span>
 <span class="sd">    equipment = cfg.equipment["dmm"]</span>

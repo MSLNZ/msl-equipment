@@ -5138,7 +5138,7 @@
 <span class="w">        </span><span class="nt">&lt;xsd:element</span><span class="w"> </span><span class="na">name=</span><span class="s">"connection"</span><span class="nt">&gt;</span>
 <span class="w">          </span><span class="nt">&lt;xsd:complexType&gt;</span>
 <span class="w">            </span><span class="nt">&lt;xsd:all&gt;</span>
-<span class="w">              </span><span class="nt">&lt;xsd:element</span><span class="w"> </span><span class="na">name=</span><span class="s">"eid"</span><span class="w"> </span><span class="na">type=</span><span class="s">"xsd:string"</span><span class="nt">&gt;</span>
+<span class="w">              </span><span class="nt">&lt;xsd:element</span><span class="w"> </span><span class="na">name=</span><span class="s">"id"</span><span class="w"> </span><span class="na">type=</span><span class="s">"xsd:string"</span><span class="nt">&gt;</span>
 <span class="w">                </span><span class="nt">&lt;xsd:annotation&gt;</span>
 <span class="w">                  </span><span class="nt">&lt;xsd:documentation&gt;</span>
 <span class="w">                    </span>The<span class="w"> </span>equipment<span class="w"> </span>ID<span class="w"> </span>from<span class="w"> </span>an<span class="w"> </span>equipment<span class="w"> </span>register.
@@ -5202,6 +5202,13 @@
 <span class="w">                </span><span class="nt">&lt;/xsd:complexType&gt;</span>
 <span class="w">              </span><span class="nt">&lt;/xsd:element&gt;</span>
 <span class="w">            </span><span class="nt">&lt;/xsd:all&gt;</span>
+<span class="w">            </span><span class="nt">&lt;xsd:attribute</span><span class="w"> </span><span class="na">name=</span><span class="s">"alias"</span><span class="w"> </span><span class="na">type=</span><span class="s">"xsd:string"</span><span class="nt">&gt;</span>
+<span class="w">              </span><span class="nt">&lt;xsd:annotation&gt;</span>
+<span class="w">                </span><span class="nt">&lt;xsd:documentation&gt;</span>
+<span class="w">                  </span>An<span class="w"> </span>alternative<span class="w"> </span>name<span class="w"> </span>to<span class="w"> </span>associate<span class="w"> </span>with<span class="w"> </span>the<span class="w"> </span>connection.
+<span class="w">                </span><span class="nt">&lt;/xsd:documentation&gt;</span>
+<span class="w">              </span><span class="nt">&lt;/xsd:annotation&gt;</span>
+<span class="w">            </span><span class="nt">&lt;/xsd:attribute&gt;</span>
 <span class="w">          </span><span class="nt">&lt;/xsd:complexType&gt;</span>
 <span class="w">        </span><span class="nt">&lt;/xsd:element&gt;</span>
 <span class="w">      </span><span class="nt">&lt;/xsd:sequence&gt;</span>
@@ -5210,15 +5217,15 @@
 <span class="nt">&lt;/xsd:schema&gt;</span>
 </code></pre></div>
 <h3 id="connections-xml-example">Example<a class="headerlink" href="#connections-xml-example" title="Permanent link">¤</a></h3>
-<p>Example XML file to specify connection information. Only the <code>&lt;eid&gt;</code> and <code>&lt;address&gt;</code> elements are required, all other elements are optional.</p>
+<p>Example XML file to specify connection information. Only the <code>&lt;id&gt;</code> and <code>&lt;address&gt;</code> elements are required, all other elements and the <code>alias</code> attribute are optional.</p>
 <div class="highlight"><pre><span></span><code><span class="cp">&lt;?xml version="1.0" encoding="utf-8"?&gt;</span>
 <span class="nt">&lt;connections&gt;</span>
 <span class="w">  </span><span class="nt">&lt;connection&gt;</span>
-<span class="w">    </span><span class="nt">&lt;eid&gt;</span>MSLE.M.041<span class="nt">&lt;/eid&gt;</span>
+<span class="w">    </span><span class="nt">&lt;id&gt;</span>MSLE.M.041<span class="nt">&lt;/id&gt;</span>
 <span class="w">    </span><span class="nt">&lt;address&gt;</span>TCPIP::192.168.1.10::hislip0<span class="nt">&lt;/address&gt;</span>
 <span class="w">  </span><span class="nt">&lt;/connection&gt;</span>
-<span class="w">  </span><span class="nt">&lt;connection&gt;</span>
-<span class="w">    </span><span class="nt">&lt;eid&gt;</span>MSLE.M.023<span class="nt">&lt;/eid&gt;</span>
+<span class="w">  </span><span class="nt">&lt;connection</span><span class="w"> </span><span class="na">alias=</span><span class="s">"x-stage"</span><span class="nt">&gt;</span>
+<span class="w">    </span><span class="nt">&lt;id&gt;</span>MSLE.M.023<span class="nt">&lt;/id&gt;</span>
 <span class="w">    </span><span class="nt">&lt;address&gt;</span>ASRL/dev/ttyS1<span class="nt">&lt;/address&gt;</span>
 <span class="w">    </span><span class="nt">&lt;backend&gt;</span>MSL<span class="nt">&lt;/backend&gt;</span>
 <span class="w">    </span><span class="nt">&lt;manufacturer&gt;</span>Company<span class="w"> </span>Name<span class="nt">&lt;/manufacturer&gt;</span>

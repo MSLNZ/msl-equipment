@@ -1902,6 +1902,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#msl.equipment.schema.Connection.alias" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-attribute"></code>&nbsp;alias
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#msl.equipment.schema.Connection.backend" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1913,10 +1924,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#msl.equipment.schema.Connection.eid" class="md-nav__link">
+  <a href="#msl.equipment.schema.Connection.id" class="md-nav__link">
     <span class="md-ellipsis">
       
-        <code class="doc-symbol doc-symbol-toc doc-symbol-attribute"></code>&nbsp;eid
+        <code class="doc-symbol doc-symbol-toc doc-symbol-attribute"></code>&nbsp;id
       
     </span>
   </a>
@@ -4989,6 +5000,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#msl.equipment.schema.Connection.alias" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-attribute"></code>&nbsp;alias
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#msl.equipment.schema.Connection.backend" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -5000,10 +5022,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#msl.equipment.schema.Connection.eid" class="md-nav__link">
+  <a href="#msl.equipment.schema.Connection.id" class="md-nav__link">
     <span class="md-ellipsis">
       
-        <code class="doc-symbol doc-symbol-toc doc-symbol-attribute"></code>&nbsp;eid
+        <code class="doc-symbol doc-symbol-toc doc-symbol-attribute"></code>&nbsp;id
       
     </span>
   </a>
@@ -5105,9 +5127,10 @@
 <div class="doc-signature highlight"><pre><span></span><code><span class="nf">Connection</span><span class="p">(</span>
     <span class="n">address</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
+    <span class="n">alias</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></span> <span class="o">=</span> <span class="s2">""</span><span class="p">,</span>
     <span class="n">backend</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="typing.Literal" href="https://docs.python.org/3/library/typing.html#typing.Literal">Literal</a></span><span class="p">[</span><span class="s2">"MSL"</span><span class="p">,</span> <span class="s2">"PyVISA"</span><span class="p">,</span> <span class="s2">"NIDAQ"</span><span class="p">]</span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-internal" title="            Backend
 (Enum) (msl.equipment.enumerations.Backend)" href="../enumerations/#msl.equipment.enumerations.Backend">Backend</a></span> <span class="o">=</span> <span class="n"><span title="msl.equipment.enumerations.Backend.MSL">MSL</span></span><span class="p">,</span>
-    <span class="n">eid</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></span> <span class="o">=</span> <span class="s2">""</span><span class="p">,</span>
+    <span class="nb">id</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></span> <span class="o">=</span> <span class="s2">""</span><span class="p">,</span>
     <span class="n">manufacturer</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></span> <span class="o">=</span> <span class="s2">""</span><span class="p">,</span>
     <span class="n">model</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></span> <span class="o">=</span> <span class="s2">""</span><span class="p">,</span>
     <span class="n">serial</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></span> <span class="o">=</span> <span class="s2">""</span><span class="p">,</span>
@@ -5152,6 +5175,22 @@
           </tr>
           <tr class="doc-section-item">
             <td>
+                <code>alias</code>
+            </td>
+            <td>
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>An alternative name to associate with the <a class="autorefs autorefs-internal" href="#connection">Connection</a> instance.</p>
+              </div>
+            </td>
+            <td>
+                  <code>&#39;&#39;</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
                 <code>backend</code>
             </td>
             <td>
@@ -5170,20 +5209,20 @@
           </tr>
           <tr class="doc-section-item">
             <td>
-                <code>eid</code>
+                <code>id</code>
             </td>
             <td>
                   <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></code>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>The <a class="autorefs autorefs-internal" title="            id
+                <p>The equipment <a class="autorefs autorefs-internal" title="            id
 
 
   
       class-attribute
       instance-attribute
-  " href="../../schema/equipment/#msl.equipment.schema.Equipment.id">equipment id</a> to associate with the <a class="autorefs autorefs-internal" href="#connection">Connection</a> instance.</p>
+  " href="../../schema/equipment/#msl.equipment.schema.Equipment.id">id</a> to associate with the <a class="autorefs autorefs-internal" href="#connection">Connection</a> instance.</p>
               </div>
             </td>
             <td>
@@ -5267,8 +5306,7 @@ For example, the <em>baud_rate</em> and <em>parity</em> values for an <em>RS-232
 
                   <details class="mkdocstrings-source">
                     <summary>Source code in <code>src/msl/equipment/schema.py</code></summary>
-                    <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">3113</span>
-<span class="normal">3114</span>
+                    <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">3114</span>
 <span class="normal">3115</span>
 <span class="normal">3116</span>
 <span class="normal">3117</span>
@@ -5319,12 +5357,19 @@ For example, the <em>baud_rate</em> and <em>parity</em> values for an <em>RS-232
 <span class="normal">3162</span>
 <span class="normal">3163</span>
 <span class="normal">3164</span>
-<span class="normal">3165</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+<span class="normal">3165</span>
+<span class="normal">3166</span>
+<span class="normal">3167</span>
+<span class="normal">3168</span>
+<span class="normal">3169</span>
+<span class="normal">3170</span>
+<span class="normal">3171</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">address</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
+    <span class="n">alias</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">""</span><span class="p">,</span>
     <span class="n">backend</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">"MSL"</span><span class="p">,</span> <span class="s2">"PyVISA"</span><span class="p">,</span> <span class="s2">"NIDAQ"</span><span class="p">]</span> <span class="o">|</span> <span class="n">Backend</span> <span class="o">=</span> <span class="n">Backend</span><span class="o">.</span><span class="n">MSL</span><span class="p">,</span>
-    <span class="n">eid</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">""</span><span class="p">,</span>
+    <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">""</span><span class="p">,</span>  <span class="c1"># noqa: A002</span>
     <span class="n">manufacturer</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">""</span><span class="p">,</span>
     <span class="n">model</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">""</span><span class="p">,</span>
     <span class="n">serial</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">""</span><span class="p">,</span>
@@ -5334,8 +5379,9 @@ For example, the <em>baud_rate</em> and <em>parity</em> values for an <em>RS-232
 
 <span class="sd">    Args:</span>
 <span class="sd">        address: The VISA-style address of the connection (see [here][address-syntax] for examples).</span>
+<span class="sd">        alias: An alternative name to associate with the [Connection][] instance.</span>
 <span class="sd">        backend: The [backend][msl.equipment.enumerations.Backend] to use to communicate with the equipment.</span>
-<span class="sd">        eid: The [equipment id][msl.equipment.schema.Equipment.id] to associate with the [Connection][] instance.</span>
+<span class="sd">        id: The equipment [id][msl.equipment.schema.Equipment.id] to associate with the [Connection][] instance.</span>
 <span class="sd">        manufacturer: The name of the manufacturer of the equipment.</span>
 <span class="sd">        model: The model number of the equipment.</span>
 <span class="sd">        serial: The serial number (or unique identifier) of the equipment.</span>
@@ -5345,11 +5391,14 @@ For example, the <em>baud_rate</em> and <em>parity</em> values for an <em>RS-232
     <span class="bp">self</span><span class="o">.</span><span class="n">address</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">address</span>
 <span class="w">    </span><span class="sd">"""The VISA-style address of the connection (see [here][address-syntax] for examples)."""</span>
 
+    <span class="bp">self</span><span class="o">.</span><span class="n">alias</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">alias</span>
+<span class="w">    </span><span class="sd">"""The alternative name associated with the [Connection][] instance."""</span>
+
     <span class="bp">self</span><span class="o">.</span><span class="n">backend</span><span class="p">:</span> <span class="n">Backend</span> <span class="o">=</span> <span class="n">Backend</span><span class="p">(</span><span class="n">backend</span><span class="p">)</span>
 <span class="w">    </span><span class="sd">"""The [backend][msl.equipment.enumerations.Backend] that is used to communicate with the equipment."""</span>
 
-    <span class="bp">self</span><span class="o">.</span><span class="n">eid</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">eid</span>
-<span class="w">    </span><span class="sd">"""The [equipment id][msl.equipment.schema.Equipment.id] associated with the [Connection][] instance."""</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="nb">id</span>
+<span class="w">    </span><span class="sd">"""The equipment [id][msl.equipment.schema.Equipment.id] associated with the [Connection][] instance."""</span>
 
     <span class="bp">self</span><span class="o">.</span><span class="n">manufacturer</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">manufacturer</span>
 <span class="w">    </span><span class="sd">"""The name of the manufacturer of the equipment."""</span>
@@ -5413,6 +5462,30 @@ For example, the <em>baud_rate</em> and <em>parity</em> values for an <em>RS-232
 
 
 
+<h3 id="msl.equipment.schema.Connection.alias" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-attribute"></code>            <span class="doc doc-object-name doc-attribute-name">alias</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+<a href="#msl.equipment.schema.Connection.alias" class="headerlink" title="Permanent link">¤</a></h3>
+<div class="doc-signature highlight"><pre><span></span><code><span class="n">alias</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></span> <span class="o">=</span> <span class="n"><span title="msl.equipment.schema.Connection(alias)">alias</span></span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>The alternative name associated with the <a class="autorefs autorefs-internal" href="#connection">Connection</a> instance.</p>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
 <h3 id="msl.equipment.schema.Connection.backend" class="doc doc-heading">
 <code class="doc-symbol doc-symbol-heading doc-symbol-attribute"></code>            <span class="doc doc-object-name doc-attribute-name">backend</span>
 
@@ -5440,27 +5513,27 @@ For example, the <em>baud_rate</em> and <em>parity</em> values for an <em>RS-232
 
 
 
-<h3 id="msl.equipment.schema.Connection.eid" class="doc doc-heading">
-<code class="doc-symbol doc-symbol-heading doc-symbol-attribute"></code>            <span class="doc doc-object-name doc-attribute-name">eid</span>
+<h3 id="msl.equipment.schema.Connection.id" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-attribute"></code>            <span class="doc doc-object-name doc-attribute-name">id</span>
 
 
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
-<a href="#msl.equipment.schema.Connection.eid" class="headerlink" title="Permanent link">¤</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><span class="n">eid</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></span> <span class="o">=</span> <span class="n"><span title="msl.equipment.schema.Connection(eid)">eid</span></span>
+<a href="#msl.equipment.schema.Connection.id" class="headerlink" title="Permanent link">¤</a></h3>
+<div class="doc-signature highlight"><pre><span></span><code><span class="nb">id</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></span> <span class="o">=</span> <span class="n"><span title="msl.equipment.schema.Connection(id)">id</span></span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
 
-        <p>The <a class="autorefs autorefs-internal" title="            id
+        <p>The equipment <a class="autorefs autorefs-internal" title="            id
 
 
   
       class-attribute
       instance-attribute
-  " href="../../schema/equipment/#msl.equipment.schema.Equipment.id">equipment id</a> associated with the <a class="autorefs autorefs-internal" href="#connection">Connection</a> instance.</p>
+  " href="../../schema/equipment/#msl.equipment.schema.Equipment.id">id</a> associated with the <a class="autorefs autorefs-internal" href="#connection">Connection</a> instance.</p>
 
     </div>
 
@@ -5614,13 +5687,7 @@ For example, the <em>baud_rate</em> and <em>parity</em> values for an <em>RS-232
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/msl/equipment/schema.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">3171</span>
-<span class="normal">3172</span>
-<span class="normal">3173</span>
-<span class="normal">3174</span>
-<span class="normal">3175</span>
-<span class="normal">3176</span>
-<span class="normal">3177</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">3177</span>
 <span class="normal">3178</span>
 <span class="normal">3179</span>
 <span class="normal">3180</span>
@@ -5634,7 +5701,14 @@ For example, the <em>baud_rate</em> and <em>parity</em> values for an <em>RS-232
 <span class="normal">3188</span>
 <span class="normal">3189</span>
 <span class="normal">3190</span>
-<span class="normal">3191</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">connect</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_Any</span><span class="p">:</span>  <span class="c1"># noqa: ANN401</span>
+<span class="normal">3191</span>
+<span class="normal">3192</span>
+<span class="normal">3193</span>
+<span class="normal">3194</span>
+<span class="normal">3195</span>
+<span class="normal">3196</span>
+<span class="normal">3197</span>
+<span class="normal">3198</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">connect</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_Any</span><span class="p">:</span>  <span class="c1"># noqa: ANN401</span>
 <span class="w">    </span><span class="sd">"""Connect to the equipment for computer control.</span>
 
 <span class="sd">    The following sequence is used to decide how the connection is established.</span>
@@ -5648,7 +5722,8 @@ For example, the <em>baud_rate</em> and <em>parity</em> values for an <em>RS-232
 <span class="sd">       that is supported by one of the [Interfaces][connections-interfaces], that Interface is used.</span>
 <span class="sd">    """</span>
     <span class="n">equipment</span> <span class="o">=</span> <span class="n">Equipment</span><span class="p">(</span>
-        <span class="nb">id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">eid</span><span class="p">,</span>
+        <span class="n">alias</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">alias</span><span class="p">,</span>
+        <span class="nb">id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
         <span class="n">manufacturer</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">manufacturer</span><span class="p">,</span>
         <span class="n">model</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">,</span>
         <span class="n">serial</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">serial</span><span class="p">,</span>

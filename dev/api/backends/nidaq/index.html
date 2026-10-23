@@ -5040,7 +5040,7 @@ features like code completion and type checking.</p>
 <div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">nidaqmx</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">msl.equipment</span><span class="w"> </span><span class="kn">import</span> <span class="n">Config</span>
 
-<span class="c1"># config.xml contains &lt;equipment eid="MSLE.0.142" name="daq" manufacturer="NI"/&gt;</span>
+<span class="c1"># config.xml contains &lt;equipment id="MSLE.0.142" name="daq" manufacturer="NI"/&gt;</span>
 <span class="c1"># and specifies where the equipment registers are and the connections file.</span>
 <span class="n">cfg</span> <span class="o">=</span> <span class="n">Config</span><span class="p">(</span><span class="s2">"config.xml"</span><span class="p">)</span>
 <span class="n">equipment</span> <span class="o">=</span> <span class="n">cfg</span><span class="o">.</span><span class="n">equipment</span><span class="p">[</span><span class="s2">"daq"</span><span class="p">]</span>
@@ -5205,7 +5205,7 @@ how to use the <code>nidaqmx</code> package.</p>
 <span class="sd">    import nidaqmx</span>
 <span class="sd">    from msl.equipment import Config</span>
 
-<span class="sd">    # config.xml contains &lt;equipment eid="MSLE.0.142" name="daq" manufacturer="NI"/&gt;</span>
+<span class="sd">    # config.xml contains &lt;equipment id="MSLE.0.142" name="daq" manufacturer="NI"/&gt;</span>
 <span class="sd">    # and specifies where the equipment registers are and the connections file.</span>
 <span class="sd">    cfg = Config("config.xml")</span>
 <span class="sd">    equipment = cfg.equipment["daq"]</span>
@@ -5337,23 +5337,23 @@ instance gets garbage collected, which happens when the reference count is 0.</p
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/msl/equipment/schema.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">3356</span>
-<span class="normal">3357</span>
-<span class="normal">3358</span>
-<span class="normal">3359</span>
-<span class="normal">3360</span>
-<span class="normal">3361</span>
-<span class="normal">3362</span>
-<span class="normal">3363</span>
-<span class="normal">3364</span>
-<span class="normal">3365</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">3365</span>
 <span class="normal">3366</span>
 <span class="normal">3367</span>
 <span class="normal">3368</span>
 <span class="normal">3369</span>
 <span class="normal">3370</span>
 <span class="normal">3371</span>
-<span class="normal">3372</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">disconnect</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="normal">3372</span>
+<span class="normal">3373</span>
+<span class="normal">3374</span>
+<span class="normal">3375</span>
+<span class="normal">3376</span>
+<span class="normal">3377</span>
+<span class="normal">3378</span>
+<span class="normal">3379</span>
+<span class="normal">3380</span>
+<span class="normal">3381</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">disconnect</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Disconnect from the equipment.</span>
 
 <span class="sd">    This method can be overridden in the subclass if the subclass must implement</span>

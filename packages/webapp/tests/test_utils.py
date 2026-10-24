@@ -1,4 +1,4 @@
-# cSpell: ignore documentclass embedfile
+# cSpell: ignore documentclass embedfile docinfo
 from __future__ import annotations
 
 import sys
@@ -1238,3 +1238,103 @@ async def test_to_pdf_attachment_relative_path(tmp_path: Path) -> None:
     assert (attach_path1 / "data.txt").read_text() == "hi"
     assert (attach_path2 / "foo.txt").read_text() == "foo"
     assert pdf == tmp_path / "report.pdf"
+
+
+@pytest.mark.skipif(not has_word_app, reason="Microsoft Word is not installed")
+def test_word_to_pdf_extra_success(tmp_path: Path) -> None:
+    path = Path(__file__).parent / "data" / "Hello.docx"
+
+    docx = tmp_path / "Hello.docx"
+    _ = docx.write_bytes(path.read_bytes())
+
+    pdf = tmp_path / "Hello.pdf"
+
+    extra = {
+        "metadata.json": b"""
+        {
+            "title": "(A fictitious) report on the calibration of a type-N male open, Sn: 54673",
+            "authors": ["Measurement Standards Laboratory of New Zealand"],
+            "keywords": {
+                "Document": "Calibration Report",
+                "Issued": "19/02/2018",
+                "Year": "2018",
+                "Section": "Electrical",
+                "Section Report Number": "S2456"
+            }
+        }""",
+        "data.csv": b"1,2,3\n4,5,6",
+    }
+
+    error = utils.word_to_pdf(docx, extra)
+    assert not error
+    assert pdf.exists()
+    assert pdf.read_bytes().startswith(b"%PDF-")
+
+    with Pdf.open(pdf) as file:
+        with file.open_metadata() as m:
+            assert m["dc:title"] == "(A fictitious) report on the calibration of a type-N male open, Sn: 54673"
+            assert m["dc:creator"] == ["Measurement Standards Laboratory of New Zealand"]
+            assert m["dc:subject"] == {
+                "Document: Calibration Report",
+                "Issued: 19/02/2018",
+                "Year: 2018",
+                "Section: Electrical",
+                "Section Report Number: S2456",
+            }
+
+        assert file.docinfo["/Keywords"] == (
+            "Document: Calibration Report, Issued: 19/02/2018, Year: 2018, "
+            "Section: Electrical, Section Report Number: S2456"
+        )
+        assert file.attachments["data.csv"].get_file().read_bytes() == b"1,2,3\n4,5,6"
+
+
+@pytest.mark.skipif(not has_word_app, reason="Microsoft Word is not installed")
+def test_word_to_pdf_metadata_json_invalid_json(tmp_path: Path) -> None:
+    path = Path(__file__).parent / "data" / "Hello.docx"
+
+    docx = tmp_path / "Hello.docx"
+    _ = docx.write_bytes(path.read_bytes())
+
+    pdf = tmp_path / "Hello.pdf"
+
+    # not valid JSON
+    extra = {"metadata.json": b"title=whatever"}
+
+    error = utils.word_to_pdf(docx, extra)
+    assert error == "ERROR! metadata.json invalid: Expecting value: line 1 column 1 (char 0)"
+    assert not pdf.exists()
+
+
+@pytest.mark.skipif(not has_word_app, reason="Microsoft Word is not installed")
+def test_word_to_pdf_metadata_json_invalid_xmp_type(tmp_path: Path) -> None:
+    path = Path(__file__).parent / "data" / "Hello.docx"
+
+    docx = tmp_path / "Hello.docx"
+    _ = docx.write_bytes(path.read_bytes())
+
+    pdf = tmp_path / "Hello.pdf"
+
+    # authors must be a list or set
+    extra = {"metadata.json": b"""{"title": "hi", "authors": "me"}"""}
+
+    error = utils.word_to_pdf(docx, extra)
+    assert error.startswith("ERROR! metadata.json invalid: dc:creator")
+    assert not pdf.exists()
+
+
+@pytest.mark.skipif(not has_word_app, reason="Microsoft Word is not installed")
+def test_word_to_pdf_metadata_json_decode_error(tmp_path: Path) -> None:
+    path = Path(__file__).parent / "data" / "Hello.docx"
+
+    docx = tmp_path / "Hello.docx"
+    _ = docx.write_bytes(path.read_bytes())
+
+    pdf = tmp_path / "Hello.pdf"
+
+    # Illegal trailing comma
+    extra = {"metadata.json": b"""{"authors": ["me", "you",]"""}
+
+    error = utils.word_to_pdf(docx, extra)
+    assert error.startswith("ERROR! metadata.json invalid: Illegal trailing comma")
+    assert not pdf.exists()

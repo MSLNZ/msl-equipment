@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import asyncio
+import json
 import logging
 import mimetypes
 import re
@@ -340,6 +341,10 @@ def add_attachments(docx: Path, tmp: Path, extra: dict[str, bytes]) -> None:
         af_entries = list(pdf.Root.get("/AF", Array()))
         for filepath, content in extra.items():
             filename = Path(filepath).name
+            if filename == "metadata.json":
+                add_metadata(pdf, filename, content)
+                continue
+
             afs = AttachedFileSpec(
                 pdf,
                 content,
@@ -357,6 +362,21 @@ def add_attachments(docx: Path, tmp: Path, extra: dict[str, bytes]) -> None:
             pdf.Root.PageMode = Name.UseAttachments
         pdf.Root.AF = pdf.make_indirect(Array(af_entries))
         pdf.save(docx.with_suffix(".pdf"))
+
+
+def add_metadata(pdf: Pdf, filename: str, content: bytes) -> None:
+    """Add XMP metadata to a PDF created from a Microsoft Word document."""
+    try:
+        metadata = json.loads(content)
+        keywords = [f"{k}: {v}" for k, v in metadata.get("keywords", {}).items()]
+        with pdf.open_metadata(strict=True) as meta:
+            meta["dc:creator"] = metadata.get("authors", [])
+            meta["dc:title"] = metadata.get("title", "")
+            meta["dc:subject"] = keywords  # modern Dublin Core keywords
+            meta["pdf:Keywords"] = ", ".join(keywords)  # legacy /Keywords entry for Document Info
+    except (AttributeError, TypeError, ValueError) as e:
+        msg = f"{filename} invalid: {e}"
+        raise ValueError(msg) from None
 
 
 async def to_pdf(document: Path, extra: dict[str, bytes]) -> tuple[Path, str]:

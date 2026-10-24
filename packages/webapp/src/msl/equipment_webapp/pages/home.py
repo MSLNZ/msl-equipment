@@ -1,5 +1,6 @@
 """Home page."""
 
+# cSpell: ignore emsp
 # pyright: reportUnknownMemberType=false, reportUnknownArgumentType=false
 from __future__ import annotations
 
@@ -124,7 +125,31 @@ verifies that it complies with the PDF/A-3 standard, the MD5 checksum is display
 document is available to download.
 
 When converting a Microsoft Word document, all extra files that are uploaded are embedded in the
-PDF file.
+PDF file, except if the filename is `metadata.json`. If a `metadata.json` file is uploaded, the
+content of the file creates [XMP metadata](https://en.wikipedia.org/wiki/Extensible_Metadata_Platform).
+This file consists of a [JSON](https://www.json.org/) object that may contain the following data,
+
+| Name     | &emsp; Data Type                    | Description                                                         |
+| :------- | :---------------------------------- | :------------------------------------------------------------------ |
+| title    | &emsp; `String`                     | The title of the document                                           |
+| authors  | &emsp; `List[String]`               | A list of authors (must be a list even if there is only one author) |
+| keywords | &emsp; `Map[String, String]` &emsp; | A collection of name-value pairs to use as keywords                 |
+<br>
+
+for example,
+```json
+{
+    "title": "A report on the calibration of a type-N male open, serial number: 54673",
+    "authors": ["Measurement Standards Laboratory of New Zealand"],
+    "keywords": {
+        "Document": "Calibration Report",
+        "Issued": "24/10/2026",
+        "Year": "2026",
+        "Section": "Electrical",
+        "Section Report Number": "S2456"
+    }
+}
+```
 
 When converting a $\\LaTeX$ document, all uploaded files are saved to the same temporary directory
 before running `pdflatex`. As such, when a $\\LaTeX$ document is compiled, all file references must

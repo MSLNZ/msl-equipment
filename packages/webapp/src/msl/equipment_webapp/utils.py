@@ -402,8 +402,21 @@ async def to_pdf(document: Path, extra: dict[str, bytes]) -> tuple[Path, str]:
         if error:
             return pdf, error
 
-        # rerun pdflatex again to make sure all references have been updated
-        return pdf, await latex_to_pdf(document)
+        # rerun pdflatex to make sure all cross references are updated
+        # compare the checksum of the .aux file to determine when it remains stable
+        aux = document.with_suffix(".aux")
+        if not aux.exists():  # then run it one more time
+            return pdf, await latex_to_pdf(document)
+
+        previous_md5 = md5(aux.read_bytes()).hexdigest()  # noqa: S324
+        for _ in range(5):
+            _ = await latex_to_pdf(document)
+            current_md5 = md5(aux.read_bytes()).hexdigest()  # noqa: S324
+            if current_md5 == previous_md5:
+                break
+            previous_md5 = current_md5
+
+        return pdf, ""
 
     return pdf, word_to_pdf(document, extra)
 

@@ -393,5 +393,5 @@ async def test_pdf_convert_valid() -> None:
     assert a["base64"]
 
     assert b.children is not None
-    assert b.children.startswith("MD5:")
+    assert b.children.startswith("SHA-256:")
     assert c is None

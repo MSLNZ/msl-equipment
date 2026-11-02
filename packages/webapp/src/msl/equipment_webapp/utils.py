@@ -9,7 +9,7 @@ import logging
 import mimetypes
 import re
 from datetime import date, datetime
-from hashlib import md5
+from hashlib import sha256
 from itertools import chain
 from pathlib import Path
 from tempfile import TemporaryDirectory
@@ -226,7 +226,7 @@ async def convert_to_pdf(filename: str, content: bytes, extra: dict[str, bytes])
             return pdf, error
 
         pdf["content"] = pdf_filename.read_bytes()
-        pdf["checksum"] = md5(pdf["content"]).hexdigest()  # noqa: S324
+        pdf["checksum"] = sha256(pdf["content"]).hexdigest()
         return pdf, ""
 
 
@@ -408,13 +408,13 @@ async def to_pdf(document: Path, extra: dict[str, bytes]) -> tuple[Path, str]:
         if not aux.exists():  # then run it one more time
             return pdf, await latex_to_pdf(document)
 
-        previous_md5 = md5(aux.read_bytes()).hexdigest()  # noqa: S324
+        previous_sha256 = sha256(aux.read_bytes()).hexdigest()
         for _ in range(5):
             _ = await latex_to_pdf(document)
-            current_md5 = md5(aux.read_bytes()).hexdigest()  # noqa: S324
-            if current_md5 == previous_md5:
+            current_sha256 = sha256(aux.read_bytes()).hexdigest()
+            if current_sha256 == previous_sha256:
                 break
-            previous_md5 = current_md5
+            previous_sha256 = current_sha256
 
         return pdf, ""
 

@@ -121,7 +121,7 @@ pdf_help = """
 
 Upload a $\\LaTeX$ or Microsoft Word document to convert it to the PDF/A-3 format with digital
 files embedded. After the PDF document is produced, the [veraPDF](https://verapdf.org/) tool
-verifies that it complies with the PDF/A-3 standard, the MD5 checksum is displayed and the PDF
+verifies that it complies with the PDF/A-3 standard, the SHA-256 checksum is displayed and the PDF
 document is available to download.
 
 When converting a Microsoft Word document, all extra files that are uploaded are embedded in the

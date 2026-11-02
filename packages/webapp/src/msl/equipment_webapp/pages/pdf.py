@@ -300,6 +300,6 @@ async def convert(  # type: ignore[misc]
         "base64": True,
     }
 
-    alert = dbc.Alert(f"MD5: {pdf['checksum']}", color="success", className="text-center")
+    alert = dbc.Alert(f"SHA-256: {pdf['checksum']}", color="success", className="text-center")
 
     return reply, alert, None

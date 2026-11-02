@@ -241,7 +241,7 @@ def configure_parser() -> ArgumentParser:
         "-c",
         "--skip-checksum",
         action="store_true",
-        help="Skip <file> and <digitalReport> SHA256 checksum validation.",
+        help="Skip <file> and <digitalReport> SHA-256 checksum validation.",
     )
     _ = parser.add_argument(
         "-u",

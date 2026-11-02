@@ -308,7 +308,7 @@ async def test_convert_to_pdf_word(tmp_path: Path) -> None:
     assert pdf["path"].name == "Hello.pdf"
     assert pdf["content"].startswith(b"%PDF-")
     assert pdf["mime_type"] == "application/pdf"
-    assert len(pdf["checksum"]) == 32
+    assert len(pdf["checksum"]) == 64
 
     with Pdf.open(BytesIO(pdf["content"])) as f:
         attached = f.attachments["irradiance.xlsx"].get_file()

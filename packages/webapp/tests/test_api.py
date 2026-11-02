@@ -144,7 +144,7 @@ class TestAPI:
         assert int(response.headers["content-length"]) > 19500  # MiKTeX Windows:"20726", TeXLive Ubuntu:"19631"
         assert response.headers["content-type"] == "application/pdf"
         assert response.headers["filename"] == "example.pdf"
-        assert len(response.headers["md5-checksum"]) == 32
+        assert len(response.headers["sha-256"]) == 64
         assert response.content.startswith(b"%PDF-")
 
     def test_assets(self) -> None:

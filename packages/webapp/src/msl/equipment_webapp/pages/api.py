@@ -218,7 +218,7 @@ ext = [f"`{e}`" for e in utils.CONVERT_EXTENSIONS]
 
     response = requests.post("{base_url}/api/pdf", files=files, timeout=30)
     if response.ok:
-        print("SHA-256 checksum:", response.headers["sha-256"])
+        print("SHA-256 checksum:", response.headers["sha256"])
         print("PDF saved to:", response.headers["filename"])
         with open(response.headers["filename"], "wb") as file:
             file.write(response.content)
@@ -270,7 +270,7 @@ async def pdf(
         media_type=pdf["mime_type"],
         headers={
             "Content-Disposition": f'attachment; filename="{pdf["path"].name}"',
-            "SHA-256": pdf["checksum"],
-            "Filename": pdf["path"].name,
+            "sha256": pdf["checksum"],
+            "filename": pdf["path"].name,
         },
     )

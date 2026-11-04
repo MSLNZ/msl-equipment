@@ -25,7 +25,7 @@ print(f"Pulsed mode? {w.pulsed}")
 print(f"Precision {w.precision!r}")
 
 _ = input("Press ENTER to start a measurement (wait for the software window to finish loading) ")
-w.start_measurement()
+w.start()
 
 # Use fine precision
 w.precision = w.Precision.Fine
@@ -37,6 +37,6 @@ print("Wavelength", w.wavelength(), "nm")
 print("Wavelength", w.wavelength(w.Unit.PhotonEnergy), "eV")
 print("Temperature", w.temperature, "°C")
 
-# Disconnect from the Wavelength Meter
-w.stop_measurement()
+# Stop the measurement and disconnect from the Wavelength Meter
+w.stop()
 w.disconnect()

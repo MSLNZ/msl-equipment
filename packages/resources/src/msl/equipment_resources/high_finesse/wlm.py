@@ -98,7 +98,7 @@ class HighFinesse(Interface, manufacturer=r"High\s*Finesse"):
 
     @property
     def analysis_mode_enabled(self) -> bool:
-        """Get/set whether the Analysis Mode is enabled or disabled."""
+        """Get/set whether Analysis Mode is enabled or disabled."""
         return self._wlm.get_analysis_mode()
 
     @analysis_mode_enabled.setter
@@ -107,7 +107,7 @@ class HighFinesse(Interface, manufacturer=r"High\s*Finesse"):
 
     @property
     def auto_exposure_enabled(self) -> bool:
-        """Get/set whether the auto-exposure time is enabled or disabled."""
+        """Get/set whether automatic-exposure time is enabled or disabled."""
         return self._wlm.get_exposure_mode()
 
     @auto_exposure_enabled.setter
@@ -295,11 +295,11 @@ class HighFinesse(Interface, manufacturer=r"High\s*Finesse"):
         """
         self._wlm.set_exposure_time(ms=ms, channel=channel, index=index)
 
-    def start_measurement(self) -> None:
+    def start(self) -> None:
         """Start a measurement."""
         _ = self.operation(2)  # cCtrlStartMeasurement
 
-    def stop_measurement(self) -> None:
+    def stop(self) -> None:
         """Stop the measurement."""
         _ = self.operation(0)  # cCtrlStopAll
 

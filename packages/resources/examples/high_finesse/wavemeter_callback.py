@@ -41,13 +41,13 @@ w.run_software(f"C:/Program Files (x86)/HighFinesse/Wavelength Meter WS5 {c.seri
 # Start the measurement and register the callback function to receive data
 _ = input("Press ENTER to start a measurement (wait for the software window to finish loading) ")
 
-w.start_measurement()
+w.start()
 w.set_callback(my_callback)
 
 # Wait for ENTER to be pressed
 _ = input()
 
-# Disconnect from the wavelength meter
+# Disable the callback, stop the measurement and disconnect from the Wavelength Meter
 w.set_callback(None)
-w.stop_measurement()
+w.stop()
 w.disconnect()

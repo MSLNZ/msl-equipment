@@ -38,7 +38,7 @@ lsa.precision = lsa.Precision.Fine
 lsa.linewidth_enabled = True
 
 _ = input("Press ENTER to start a measurement (wait for the software window to finish loading) ")
-lsa.start_measurement()
+lsa.start()
 
 # Wait for a valid wavelength to be measured and for the exposure time to be stable for 2 seconds
 lsa.wait(2)
@@ -49,6 +49,6 @@ print("Linewidth", lsa.linewidth(), "nm")
 print("Pressure", lsa.pressure, "mbar")
 print("Temperature", lsa.temperature, "°C")
 
-# Disconnect from the Laser Spectrum Analyser
-lsa.stop_measurement()
+# Stop the measurement and disconnect from the Laser Spectrum Analyser
+lsa.stop()
 lsa.disconnect()

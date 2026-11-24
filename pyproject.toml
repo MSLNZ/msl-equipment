@@ -91,7 +91,7 @@ type = [
     "basedpyright>=1.31.0",
     "mypy>=1.14.1",
     "types-lxml>=2025.3.30",
-    "types-pyserial>=3.5.0.20241221",
+    "types-pyserial>=3.5.0.20241221,<3.5.0.20261122",
 ]
 dev = [
     {include-group = "doc"},

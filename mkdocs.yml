@@ -11,6 +11,7 @@ theme:
   features:
     - content.code.copy
     - content.code.annotate
+    - content.tabs.link  # select same tab across the site when a user clicks a tab with the same label
     - navigation.footer
     - navigation.indexes
     - navigation.tabs

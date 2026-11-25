@@ -9,4 +9,4 @@
 
 ::: msl.equipment_resources.isotech.millik
     options:
-        filters: ["!MilliK", "!^_"]
+        filters: ["!^MilliK$", "!^_"]

@@ -170,57 +170,53 @@ def test_modbus_response_str() -> None:
 def test_modbus_response_int16() -> None:
     mr = ModbusResponse(1, 1, b"\xfc\x18")
     assert mr.int16() == -1000
-    assert mr.int16("big") == -1000
-    assert mr.int16("little") == 6396
 
 
 def test_modbus_response_uint16() -> None:
     mr = ModbusResponse(1, 1, bytes([48, 57]))
     assert mr.uint16() == 12345
-    assert mr.uint16("big") == 12345
-    assert mr.uint16("little") == 14640
 
 
 def test_modbus_response_int32() -> None:
     mr = ModbusResponse(1, 1, b"\xff\xf0\xbd\xc0")
     assert mr.int32() == -1_000_000
     assert mr.int32("big") == -1_000_000
-    assert mr.int32("little") == -1061293825
+    assert mr.int32("little") == -1_111_425_040
 
 
 def test_modbus_response_uint32() -> None:
     mr = ModbusResponse(1, 1, b"\x07[\xcd\x15")
-    assert mr.uint32() == 123456789
-    assert mr.uint32("big") == 123456789
-    assert mr.uint32("little") == 365779719
+    assert mr.uint32() == 123_456_789
+    assert mr.uint32("big") == 123_456_789
+    assert mr.uint32("little") == 3_440_707_419
 
 
 def test_modbus_response_int64() -> None:
-    mr = ModbusResponse(1, 1, b"\xff\xff\xfc\x00\x00\x00\x00\x00")
-    assert mr.int64() == -4398046511104
-    assert mr.int64("big") == -4398046511104
-    assert mr.int64("little") == 16580607
+    mr = ModbusResponse(1, 1, b"\xfeId\xb4Y\xcf\x0c\xb2")
+    assert mr.int64() == -123_456_789_012_345_678
+    assert mr.int64("big") == -123_456_789_012_345_678
+    assert mr.int64("little") == 914_892_421_592_317_513
 
 
 def test_modbus_response_uint64() -> None:
-    mr = ModbusResponse(1, 1, b"\x00\x00\x04\x00\x00\x00\x00\x00")
-    assert mr.uint64() == 4398046511104
-    assert mr.uint64("big") == 4398046511104
-    assert mr.uint64("little") == 262144
+    mr = ModbusResponse(1, 1, b"\xfeId\xb4Y\xcf\x0c\xb2")
+    assert mr.uint64() == 18_323_287_284_697_205_938
+    assert mr.uint64("big") == 18_323_287_284_697_205_938
+    assert mr.uint64("little") == 914_892_421_592_317_513
 
 
 def test_modbus_response_float32() -> None:
-    mr = ModbusResponse(1, 1, b"Dz\x00\x00")
-    assert mr.float32() == 1000.0
-    assert mr.float32("big") == 1000.0
-    assert mr.float32("little") == 4.3860641933366774e-41
+    mr = ModbusResponse(1, 1, b"\xf4\xe6D\x7f")
+    assert mr.float32() == -1.4594940714022192e32
+    assert mr.float32("big") == -1.4594940714022192e32
+    assert mr.float32("little") == 1023.8265380859375
 
 
 def test_modbus_response_float64() -> None:
-    mr = ModbusResponse(1, 1, b"\xc12\xc4\xb0\x00\x00\x00\x00")
-    assert mr.float64() == -1.23e6
-    assert mr.float64("big") == -1.23e6
-    assert mr.float64("little") == 1.4652248266e-314
+    mr = ModbusResponse(1, 1, b"Bq\xf7\x1f\xb0E\x00\x01")
+    assert mr.float64() == 1234567890000.0002
+    assert mr.float64("big") == 1234567890000.0002
+    assert mr.float64("little") == 2.348242246305397e-309
 
 
 def test_modbus_response_nan_inf() -> None:
@@ -247,49 +243,86 @@ def test_modbus_response_decode() -> None:
 
 
 def test_modbus_response_array_i4() -> None:
-    data = np.array([45, -825, 62982, 34104852], dtype=np.int32)
-    mr = ModbusResponse(1, 1, data.tobytes())
+    # data is returned as big-endian
+    data = b"\xff\xf0\xbd\xc0\xff\xf0\xbd\xc1\xff\xf0\xbd\xc2\xff\xf0\xbd\xc3"
+    swapped = b"\xbd\xc0\xff\xf0\xbd\xc1\xff\xf0\xbd\xc2\xff\xf0\xbd\xc3\xff\xf0"
 
-    big = np.frombuffer(data.tobytes(), dtype=">i4")
-    little = np.frombuffer(data.tobytes(), dtype="<i4")
-    assert np.array_equal(mr.array("i4"), big)
-    assert np.array_equal(mr.array("int32"), big)
-    assert np.array_equal(mr.array(">i4"), big)
-    assert np.array_equal(mr.array("<i4"), little)
-    assert np.array_equal(mr.array(np.int32), big)
-    assert np.array_equal(mr.array(np.dtype(">i4")), big)
-    assert np.array_equal(mr.array(np.dtype("<i4")), little)
+    expected = np.array([-1000000, -999999, -999998, -999997], dtype=">i4")
+    ugly = np.frombuffer(swapped, dtype=">i4")
+
+    mr = ModbusResponse(1, 1, data)
+    assert np.array_equal(mr.array("i4"), expected)
+    assert np.array_equal(mr.array("int32"), expected)
+    assert np.array_equal(mr.array(">i4"), expected)
+    assert np.array_equal(mr.array("<i4"), ugly)
+    assert np.array_equal(mr.array(np.int32), expected)
+    assert np.array_equal(mr.array(np.dtype(">i4")), expected)
+    assert np.array_equal(mr.array(np.dtype("<i4")), ugly)
+
+    mr = ModbusResponse(1, 1, swapped)
+    assert np.array_equal(mr.array("i4"), ugly)
+    assert np.array_equal(mr.array("int32"), ugly)
+    assert np.array_equal(mr.array(">i4"), ugly)
+    assert np.array_equal(mr.array("<i4"), expected)
+    assert np.array_equal(mr.array(np.int32), ugly)
+    assert np.array_equal(mr.array(np.dtype(">i4")), ugly)
+    assert np.array_equal(mr.array(np.dtype("<i4")), expected)
 
 
 def test_modbus_response_array_f4() -> None:
-    data = b"\x40\xf8\x11\x5f\x40\xd4\x8c\x8a\x40\xb5\xbb\x8a\x40\x90\x78\x9c"
-    mr = ModbusResponse(1, 1, data)
+    # data is returned as little-endian
+    data = b"\x05HD\x80\xe6f\xc2\xf6"
+    swapped = b"D\x80\x05H\xc2\xf6\xe6f"
 
-    big = np.frombuffer(data, dtype=">f4")
-    little = np.frombuffer(data, dtype="<f4")
-    assert np.array_equal(mr.array("f4"), big)
-    assert np.array_equal(mr.array("float32"), big)
-    assert np.array_equal(mr.array(">f4"), big)
-    assert np.array_equal(mr.array("<f4"), little)
-    assert np.array_equal(mr.array(np.float32), big)
-    assert np.array_equal(mr.array(np.dtype(">f4")), big)
-    assert np.array_equal(mr.array(np.dtype("<f4")), little)
+    expected = np.array([1024.165, -123.45], dtype=">f4")
+    ugly = np.frombuffer(data, dtype=">f4")
+
+    mr = ModbusResponse(1, 1, data)
+    assert np.array_equal(mr.array("f4"), ugly)
+    assert np.array_equal(mr.array("float32"), ugly)
+    assert np.array_equal(mr.array(">f4"), ugly)
+    assert np.array_equal(mr.array("<f4"), expected)
+    assert np.array_equal(mr.array(np.float32), ugly)
+    assert np.array_equal(mr.array(np.dtype(">f4")), ugly)
+    assert np.array_equal(mr.array(np.dtype("<f4")), expected)
+
+    mr = ModbusResponse(1, 1, swapped)
+    assert np.array_equal(mr.array("f4"), expected)
+    assert np.array_equal(mr.array("float32"), expected)
+    assert np.array_equal(mr.array(">f4"), expected)
+    assert np.array_equal(mr.array("<f4"), ugly)
+    assert np.array_equal(mr.array(np.float32), expected)
+    assert np.array_equal(mr.array(np.dtype(">f4")), expected)
+    assert np.array_equal(mr.array(np.dtype("<f4")), ugly)
 
 
 def test_modbus_response_array_f8() -> None:
-    data = b"\x40\xf8\x11\x5f\x40\xd4\x8c\x8a\x40\xb5\xbb\x8a\x40\x90\x78\x9c"
-    mr = ModbusResponse(1, 1, data)
+    # data is returned as big-endian
+    data = b"A\x9do4T\x00\x00\x00A\x9do4X\x00\x00\x00A\x9do4\\\x00\x00\x00"
+    swapped = b"\x00\x00T\x00o4A\x9d\x00\x00X\x00o4A\x9d\x00\x00\\\x00o4A\x9d"
 
-    big = np.frombuffer(data, dtype=">f8")
-    little = np.frombuffer(data, dtype="<f8")
-    assert np.array_equal(mr.array("f8"), big)
-    assert np.array_equal(mr.array("float64"), big)
-    assert np.array_equal(mr.array(">f8"), big)
-    assert np.array_equal(mr.array("<f8"), little)
-    assert np.array_equal(mr.array(np.float64), big)
-    assert np.array_equal(mr.array(float), big)
-    assert np.array_equal(mr.array(np.dtype(">f8")), big)
-    assert np.array_equal(mr.array(np.dtype("<f8")), little)
+    expected = np.array([123456789.0, 123456790.0, 123456791.0], dtype=">f8")
+    ugly = np.frombuffer(swapped, dtype=">f8")
+
+    mr = ModbusResponse(1, 1, data)
+    assert np.array_equal(mr.array("f8"), expected)
+    assert np.array_equal(mr.array("float64"), expected)
+    assert np.array_equal(mr.array(">f8"), expected)
+    assert np.array_equal(mr.array("<f8"), ugly)
+    assert np.array_equal(mr.array(np.float64), expected)
+    assert np.array_equal(mr.array(float), expected)
+    assert np.array_equal(mr.array(np.dtype(">f8")), expected)
+    assert np.array_equal(mr.array(np.dtype("<f8")), ugly)
+
+    mr = ModbusResponse(1, 1, swapped)
+    assert np.array_equal(mr.array("f8"), ugly)
+    assert np.array_equal(mr.array("float64"), ugly)
+    assert np.array_equal(mr.array(">f8"), ugly)
+    assert np.array_equal(mr.array("<f8"), expected)
+    assert np.array_equal(mr.array(np.float64), ugly)
+    assert np.array_equal(mr.array(float), ugly)
+    assert np.array_equal(mr.array(np.dtype(">f8")), ugly)
+    assert np.array_equal(mr.array(np.dtype("<f8")), expected)
 
 
 def test_modbus_response_bits() -> None:

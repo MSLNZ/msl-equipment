@@ -602,9 +602,17 @@ class ModbusResponse:
 
     def array(self, dtype: DTypeLike) -> NDArray[Any]:
         """[numpy.ndarray][] &mdash; Returns the register data as a [numpy.ndarray][] of the specified `dtype`."""
+        buffer = np.frombuffer(self.data, dtype=">u2")
+
         if isinstance(dtype, type) or (isinstance(dtype, str) and dtype[0] not in "<>=|"):
-            dtype = np.dtype(dtype).newbyteorder(">")  # force big endian
-        return np.frombuffer(self.data, dtype=">u2").view(dtype)
+            dt = np.dtype(dtype).newbyteorder(">")  # force big endian
+        else:
+            dt = np.dtype(dtype)
+
+        if (dt.byteorder == "<") or (dt.byteorder == "=" and sys.byteorder == "little"):
+            buffer = buffer.byteswap()
+
+        return buffer.view(dt)
 
     def bits(self, bit_order: Literal["big", "little"] = "little") -> NDArray[np.bool]:
         """[numpy.ndarray][] &mdash; Returns the states of the register bits for the specified `bit_order`."""
@@ -617,50 +625,48 @@ class ModbusResponse:
 
     def float32(self, byte_order: Literal["big", "little"] = "big") -> float:
         """[float][] &mdash; Returns the register data as a 32-bit, floating-point number for the specified `byte_order`."""  # noqa: E501
-        b = ">" if byte_order == "big" else "<"
-        f32: float = unpack(b + "f", self.data)[0]
+        data = self.data if byte_order == "big" else self.data[2:] + self.data[:2]
+        f32: float = unpack(">f", data)[0]
         return f32
 
     def float64(self, byte_order: Literal["big", "little"] = "big") -> float:
         """[float][] &mdash; Returns the register data as a 64-bit, floating-point number for the specified `byte_order`."""  # noqa: E501
-        b = ">" if byte_order == "big" else "<"
-        f64: float = unpack(b + "d", self.data)[0]
+        data = self.data if byte_order == "big" else self.data[6:] + self.data[4:6] + self.data[2:4] + self.data[:2]
+        f64: float = unpack(">d", data)[0]
         return f64
 
-    def int16(self, byte_order: Literal["big", "little"] = "big") -> int:
-        """[int][] &mdash; Returns the register data as a signed, 16-bit integer for the specified `byte_order`."""
-        b = ">" if byte_order == "big" else "<"
-        i16: int = unpack(b + "h", self.data)[0]
+    def int16(self) -> int:
+        """[int][] &mdash; Returns the register data as a signed, 16-bit integer."""
+        i16: int = unpack(">h", self.data)[0]
         return i16
 
     def int32(self, byte_order: Literal["big", "little"] = "big") -> int:
         """[int][] &mdash; Returns the register data as a signed, 32-bit integer for the specified `byte_order`."""
-        b = ">" if byte_order == "big" else "<"
-        i32: int = unpack(b + "i", self.data)[0]
+        data = self.data if byte_order == "big" else self.data[2:] + self.data[:2]
+        i32: int = unpack(">i", data)[0]
         return i32
 
     def int64(self, byte_order: Literal["big", "little"] = "big") -> int:
         """[int][] &mdash; Returns the register data as a signed, 64-bit integer for the specified `byte_order`."""
-        b = ">" if byte_order == "big" else "<"
-        i64: int = unpack(b + "q", self.data)[0]
+        data = self.data if byte_order == "big" else self.data[6:] + self.data[4:6] + self.data[2:4] + self.data[:2]
+        i64: int = unpack(">q", data)[0]
         return i64
 
-    def uint16(self, byte_order: Literal["big", "little"] = "big") -> int:
-        """[int][] &mdash; Returns the register data as an unsigned, 16-bit integer for the specified `byte_order`."""
-        b = ">" if byte_order == "big" else "<"
-        u16: int = unpack(b + "H", self.data)[0]
+    def uint16(self) -> int:
+        """[int][] &mdash; Returns the register data as an unsigned, 16-bit integer."""
+        u16: int = unpack(">H", self.data)[0]
         return u16
 
     def uint32(self, byte_order: Literal["big", "little"] = "big") -> int:
         """[int][] &mdash; Returns the register data as an unsigned, 32-bit integer for the specified `byte_order`."""
-        b = ">" if byte_order == "big" else "<"
-        u32: int = unpack(b + "I", self.data)[0]
+        data = self.data if byte_order == "big" else self.data[2:] + self.data[:2]
+        u32: int = unpack(">I", data)[0]
         return u32
 
     def uint64(self, byte_order: Literal["big", "little"] = "big") -> int:
         """[int][] &mdash; Returns the register data as an unsigned, 64-bit integer for the specified `byte_order`."""
-        b = ">" if byte_order == "big" else "<"
-        u64: int = unpack(b + "Q", self.data)[0]
+        data = self.data if byte_order == "big" else self.data[6:] + self.data[4:6] + self.data[2:4] + self.data[:2]
+        u64: int = unpack(">Q", data)[0]
         return u64
 
     def unpack(self, format: str) -> tuple[Any, ...]:  # noqa: A002

@@ -96,8 +96,8 @@ async def update_table(teams: list[str], months: int | None, sync: bool, scope: 
         """Requires `websocket=True` for set_props to work."""
         if msg:
             log_buffer.append(msg)
-        set_props(f"{PAGE}-log-display", {"children": "\n".join(log_buffer)})
-        set_props(f"{PAGE}-table", {"rowData": data})
+        _ = set_props(f"{PAGE}-log-display", {"children": "\n".join(log_buffer)})
+        _ = set_props(f"{PAGE}-table", {"rowData": data})
         await utils.process_events()
 
     if (not teams) or (months is None):  # months is None if the value is not in the [0, MONTHS_MAX] range

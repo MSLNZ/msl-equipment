@@ -229,7 +229,7 @@ async def clear_extra(_n_clicks: int) -> dict[str, str]:
     """
     # Dash raised exceptions when Output("upload-document-status", "children") was defined as a callback argument
     # Using set_props is a workaround
-    set_props("pdf-upload-extra-status", {"children": None})
+    _ = set_props("pdf-upload-extra-status", {"children": None})
     await utils.process_events()
     return {}
 

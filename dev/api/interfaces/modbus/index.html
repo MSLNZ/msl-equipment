@@ -9090,13 +9090,7 @@ composed of the starting register address and the number of registers that were 
 
                   <details class="mkdocstrings-source">
                     <summary>Source code in <code>src/msl/equipment/interfaces/modbus.py</code></summary>
-                    <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">688</span>
-<span class="normal">689</span>
-<span class="normal">690</span>
-<span class="normal">691</span>
-<span class="normal">692</span>
-<span class="normal">693</span>
-<span class="normal">694</span>
+                    <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">694</span>
 <span class="normal">695</span>
 <span class="normal">696</span>
 <span class="normal">697</span>
@@ -9168,7 +9162,13 @@ composed of the starting register address and the number of registers that were 
 <span class="normal">763</span>
 <span class="normal">764</span>
 <span class="normal">765</span>
-<span class="normal">766</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">device_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">response</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="normal">766</span>
+<span class="normal">767</span>
+<span class="normal">768</span>
+<span class="normal">769</span>
+<span class="normal">770</span>
+<span class="normal">771</span>
+<span class="normal">772</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">device_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">response</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">"""Modbus device identification.</span>
 
 <span class="sd">    Do not instantiate directly. This class is returned by the</span>
@@ -9538,20 +9538,20 @@ is not in the Modbus response.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/msl/equipment/interfaces/modbus.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">793</span>
-<span class="normal">794</span>
-<span class="normal">795</span>
-<span class="normal">796</span>
-<span class="normal">797</span>
-<span class="normal">798</span>
-<span class="normal">799</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">799</span>
 <span class="normal">800</span>
 <span class="normal">801</span>
 <span class="normal">802</span>
 <span class="normal">803</span>
 <span class="normal">804</span>
 <span class="normal">805</span>
-<span class="normal">806</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">object_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="normal">806</span>
+<span class="normal">807</span>
+<span class="normal">808</span>
+<span class="normal">809</span>
+<span class="normal">810</span>
+<span class="normal">811</span>
+<span class="normal">812</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">object_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Get the value of an object ID.</span>
 
 <span class="sd">    Args:</span>
@@ -9958,11 +9958,27 @@ methods.</p>
 <span class="normal">604</span>
 <span class="normal">605</span>
 <span class="normal">606</span>
-<span class="normal">607</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">array</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dtype</span><span class="p">:</span> <span class="n">DTypeLike</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">]:</span>
+<span class="normal">607</span>
+<span class="normal">608</span>
+<span class="normal">609</span>
+<span class="normal">610</span>
+<span class="normal">611</span>
+<span class="normal">612</span>
+<span class="normal">613</span>
+<span class="normal">614</span>
+<span class="normal">615</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">array</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dtype</span><span class="p">:</span> <span class="n">DTypeLike</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">"""[numpy.ndarray][] &amp;mdash; Returns the register data as a [numpy.ndarray][] of the specified `dtype`."""</span>
+    <span class="n">buffer</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">frombuffer</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">"&gt;u2"</span><span class="p">)</span>
+
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dtype</span><span class="p">,</span> <span class="nb">type</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">dtype</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="n">dtype</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="s2">"&lt;&gt;=|"</span><span class="p">):</span>
-        <span class="n">dtype</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">(</span><span class="n">dtype</span><span class="p">)</span><span class="o">.</span><span class="n">newbyteorder</span><span class="p">(</span><span class="s2">"&gt;"</span><span class="p">)</span>  <span class="c1"># force big endian</span>
-    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">frombuffer</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">"&gt;u2"</span><span class="p">)</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">dtype</span><span class="p">)</span>
+        <span class="n">dt</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">(</span><span class="n">dtype</span><span class="p">)</span><span class="o">.</span><span class="n">newbyteorder</span><span class="p">(</span><span class="s2">"&gt;"</span><span class="p">)</span>  <span class="c1"># force big endian</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">dt</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">(</span><span class="n">dtype</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="n">dt</span><span class="o">.</span><span class="n">byteorder</span> <span class="o">==</span> <span class="s2">"&lt;"</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">dt</span><span class="o">.</span><span class="n">byteorder</span> <span class="o">==</span> <span class="s2">"="</span> <span class="ow">and</span> <span class="n">sys</span><span class="o">.</span><span class="n">byteorder</span> <span class="o">==</span> <span class="s2">"little"</span><span class="p">):</span>
+        <span class="n">buffer</span> <span class="o">=</span> <span class="n">buffer</span><span class="o">.</span><span class="n">byteswap</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">buffer</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">dt</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -9987,10 +10003,10 @@ methods.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/msl/equipment/interfaces/modbus.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">609</span>
-<span class="normal">610</span>
-<span class="normal">611</span>
-<span class="normal">612</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">bits</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bit_order</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">"big"</span><span class="p">,</span> <span class="s2">"little"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"little"</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">bool</span><span class="p">]:</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">617</span>
+<span class="normal">618</span>
+<span class="normal">619</span>
+<span class="normal">620</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">bits</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bit_order</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">"big"</span><span class="p">,</span> <span class="s2">"little"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"little"</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">bool</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">"""[numpy.ndarray][] &amp;mdash; Returns the states of the register bits for the specified `bit_order`."""</span>
     <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">frombuffer</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">unpackbits</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">count</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">count</span><span class="p">,</span> <span class="n">bitorder</span><span class="o">=</span><span class="n">bit_order</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">bool</span><span class="p">)</span>
@@ -10018,9 +10034,9 @@ methods.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/msl/equipment/interfaces/modbus.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">614</span>
-<span class="normal">615</span>
-<span class="normal">616</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">decode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">encoding</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"utf-8"</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">622</span>
+<span class="normal">623</span>
+<span class="normal">624</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">decode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">encoding</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"utf-8"</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""[str][] &amp;mdash; Returns the decoded response data using the `encoding` codec."""</span>
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">encoding</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
@@ -10047,14 +10063,14 @@ methods.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/msl/equipment/interfaces/modbus.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">618</span>
-<span class="normal">619</span>
-<span class="normal">620</span>
-<span class="normal">621</span>
-<span class="normal">622</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">float32</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">byte_order</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">"big"</span><span class="p">,</span> <span class="s2">"little"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"big"</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">626</span>
+<span class="normal">627</span>
+<span class="normal">628</span>
+<span class="normal">629</span>
+<span class="normal">630</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">float32</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">byte_order</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">"big"</span><span class="p">,</span> <span class="s2">"little"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"big"</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""[float][] &amp;mdash; Returns the register data as a 32-bit, floating-point number for the specified `byte_order`."""</span>  <span class="c1"># noqa: E501</span>
-    <span class="n">b</span> <span class="o">=</span> <span class="s2">"&gt;"</span> <span class="k">if</span> <span class="n">byte_order</span> <span class="o">==</span> <span class="s2">"big"</span> <span class="k">else</span> <span class="s2">"&lt;"</span>
-    <span class="n">f32</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">unpack</span><span class="p">(</span><span class="n">b</span> <span class="o">+</span> <span class="s2">"f"</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="k">if</span> <span class="n">byte_order</span> <span class="o">==</span> <span class="s2">"big"</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">2</span><span class="p">:]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span>
+    <span class="n">f32</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">unpack</span><span class="p">(</span><span class="s2">"&gt;f"</span><span class="p">,</span> <span class="n">data</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
     <span class="k">return</span> <span class="n">f32</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -10080,14 +10096,14 @@ methods.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/msl/equipment/interfaces/modbus.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">624</span>
-<span class="normal">625</span>
-<span class="normal">626</span>
-<span class="normal">627</span>
-<span class="normal">628</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">float64</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">byte_order</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">"big"</span><span class="p">,</span> <span class="s2">"little"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"big"</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">632</span>
+<span class="normal">633</span>
+<span class="normal">634</span>
+<span class="normal">635</span>
+<span class="normal">636</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">float64</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">byte_order</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">"big"</span><span class="p">,</span> <span class="s2">"little"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"big"</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""[float][] &amp;mdash; Returns the register data as a 64-bit, floating-point number for the specified `byte_order`."""</span>  <span class="c1"># noqa: E501</span>
-    <span class="n">b</span> <span class="o">=</span> <span class="s2">"&gt;"</span> <span class="k">if</span> <span class="n">byte_order</span> <span class="o">==</span> <span class="s2">"big"</span> <span class="k">else</span> <span class="s2">"&lt;"</span>
-    <span class="n">f64</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">unpack</span><span class="p">(</span><span class="n">b</span> <span class="o">+</span> <span class="s2">"d"</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="k">if</span> <span class="n">byte_order</span> <span class="o">==</span> <span class="s2">"big"</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">6</span><span class="p">:]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">4</span><span class="p">:</span><span class="mi">6</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">2</span><span class="p">:</span><span class="mi">4</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span>
+    <span class="n">f64</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">unpack</span><span class="p">(</span><span class="s2">"&gt;d"</span><span class="p">,</span> <span class="n">data</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
     <span class="k">return</span> <span class="n">f64</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -10103,24 +10119,22 @@ methods.</p>
 
 
 <a href="#msl.equipment.interfaces.modbus.ModbusResponse.int16" class="headerlink" title="Permanent link">¤</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><span class="nf">int16</span><span class="p">(</span><span class="n">byte_order</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="typing.Literal" href="https://docs.python.org/3/library/typing.html#typing.Literal">Literal</a></span><span class="p">[</span><span class="s1">'big'</span><span class="p">,</span> <span class="s1">'little'</span><span class="p">]</span> <span class="o">=</span> <span class="s1">'big'</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/functions.html#int">int</a></span>
+<div class="doc-signature highlight"><pre><span></span><code><span class="nf">int16</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/functions.html#int">int</a></span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
 
-        <p><a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/functions.html#int">int</a> &mdash; Returns the register data as a signed, 16-bit integer for the specified <code>byte_order</code>.</p>
+        <p><a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/functions.html#int">int</a> &mdash; Returns the register data as a signed, 16-bit integer.</p>
 
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/msl/equipment/interfaces/modbus.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">630</span>
-<span class="normal">631</span>
-<span class="normal">632</span>
-<span class="normal">633</span>
-<span class="normal">634</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">int16</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">byte_order</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">"big"</span><span class="p">,</span> <span class="s2">"little"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"big"</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">"""[int][] &amp;mdash; Returns the register data as a signed, 16-bit integer for the specified `byte_order`."""</span>
-    <span class="n">b</span> <span class="o">=</span> <span class="s2">"&gt;"</span> <span class="k">if</span> <span class="n">byte_order</span> <span class="o">==</span> <span class="s2">"big"</span> <span class="k">else</span> <span class="s2">"&lt;"</span>
-    <span class="n">i16</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">unpack</span><span class="p">(</span><span class="n">b</span> <span class="o">+</span> <span class="s2">"h"</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">638</span>
+<span class="normal">639</span>
+<span class="normal">640</span>
+<span class="normal">641</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">int16</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""[int][] &amp;mdash; Returns the register data as a signed, 16-bit integer."""</span>
+    <span class="n">i16</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">unpack</span><span class="p">(</span><span class="s2">"&gt;h"</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
     <span class="k">return</span> <span class="n">i16</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -10146,14 +10160,14 @@ methods.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/msl/equipment/interfaces/modbus.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">636</span>
-<span class="normal">637</span>
-<span class="normal">638</span>
-<span class="normal">639</span>
-<span class="normal">640</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">int32</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">byte_order</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">"big"</span><span class="p">,</span> <span class="s2">"little"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"big"</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">643</span>
+<span class="normal">644</span>
+<span class="normal">645</span>
+<span class="normal">646</span>
+<span class="normal">647</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">int32</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">byte_order</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">"big"</span><span class="p">,</span> <span class="s2">"little"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"big"</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""[int][] &amp;mdash; Returns the register data as a signed, 32-bit integer for the specified `byte_order`."""</span>
-    <span class="n">b</span> <span class="o">=</span> <span class="s2">"&gt;"</span> <span class="k">if</span> <span class="n">byte_order</span> <span class="o">==</span> <span class="s2">"big"</span> <span class="k">else</span> <span class="s2">"&lt;"</span>
-    <span class="n">i32</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">unpack</span><span class="p">(</span><span class="n">b</span> <span class="o">+</span> <span class="s2">"i"</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="k">if</span> <span class="n">byte_order</span> <span class="o">==</span> <span class="s2">"big"</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">2</span><span class="p">:]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span>
+    <span class="n">i32</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">unpack</span><span class="p">(</span><span class="s2">"&gt;i"</span><span class="p">,</span> <span class="n">data</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
     <span class="k">return</span> <span class="n">i32</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -10179,14 +10193,14 @@ methods.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/msl/equipment/interfaces/modbus.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">642</span>
-<span class="normal">643</span>
-<span class="normal">644</span>
-<span class="normal">645</span>
-<span class="normal">646</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">int64</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">byte_order</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">"big"</span><span class="p">,</span> <span class="s2">"little"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"big"</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">649</span>
+<span class="normal">650</span>
+<span class="normal">651</span>
+<span class="normal">652</span>
+<span class="normal">653</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">int64</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">byte_order</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">"big"</span><span class="p">,</span> <span class="s2">"little"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"big"</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""[int][] &amp;mdash; Returns the register data as a signed, 64-bit integer for the specified `byte_order`."""</span>
-    <span class="n">b</span> <span class="o">=</span> <span class="s2">"&gt;"</span> <span class="k">if</span> <span class="n">byte_order</span> <span class="o">==</span> <span class="s2">"big"</span> <span class="k">else</span> <span class="s2">"&lt;"</span>
-    <span class="n">i64</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">unpack</span><span class="p">(</span><span class="n">b</span> <span class="o">+</span> <span class="s2">"q"</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="k">if</span> <span class="n">byte_order</span> <span class="o">==</span> <span class="s2">"big"</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">6</span><span class="p">:]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">4</span><span class="p">:</span><span class="mi">6</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">2</span><span class="p">:</span><span class="mi">4</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span>
+    <span class="n">i64</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">unpack</span><span class="p">(</span><span class="s2">"&gt;q"</span><span class="p">,</span> <span class="n">data</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
     <span class="k">return</span> <span class="n">i64</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -10202,24 +10216,22 @@ methods.</p>
 
 
 <a href="#msl.equipment.interfaces.modbus.ModbusResponse.uint16" class="headerlink" title="Permanent link">¤</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><span class="nf">uint16</span><span class="p">(</span><span class="n">byte_order</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="typing.Literal" href="https://docs.python.org/3/library/typing.html#typing.Literal">Literal</a></span><span class="p">[</span><span class="s1">'big'</span><span class="p">,</span> <span class="s1">'little'</span><span class="p">]</span> <span class="o">=</span> <span class="s1">'big'</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/functions.html#int">int</a></span>
+<div class="doc-signature highlight"><pre><span></span><code><span class="nf">uint16</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/functions.html#int">int</a></span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
 
-        <p><a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/functions.html#int">int</a> &mdash; Returns the register data as an unsigned, 16-bit integer for the specified <code>byte_order</code>.</p>
+        <p><a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/functions.html#int">int</a> &mdash; Returns the register data as an unsigned, 16-bit integer.</p>
 
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/msl/equipment/interfaces/modbus.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">648</span>
-<span class="normal">649</span>
-<span class="normal">650</span>
-<span class="normal">651</span>
-<span class="normal">652</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">uint16</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">byte_order</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">"big"</span><span class="p">,</span> <span class="s2">"little"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"big"</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">"""[int][] &amp;mdash; Returns the register data as an unsigned, 16-bit integer for the specified `byte_order`."""</span>
-    <span class="n">b</span> <span class="o">=</span> <span class="s2">"&gt;"</span> <span class="k">if</span> <span class="n">byte_order</span> <span class="o">==</span> <span class="s2">"big"</span> <span class="k">else</span> <span class="s2">"&lt;"</span>
-    <span class="n">u16</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">unpack</span><span class="p">(</span><span class="n">b</span> <span class="o">+</span> <span class="s2">"H"</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">655</span>
+<span class="normal">656</span>
+<span class="normal">657</span>
+<span class="normal">658</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">uint16</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""[int][] &amp;mdash; Returns the register data as an unsigned, 16-bit integer."""</span>
+    <span class="n">u16</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">unpack</span><span class="p">(</span><span class="s2">"&gt;H"</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
     <span class="k">return</span> <span class="n">u16</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -10245,14 +10257,14 @@ methods.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/msl/equipment/interfaces/modbus.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">654</span>
-<span class="normal">655</span>
-<span class="normal">656</span>
-<span class="normal">657</span>
-<span class="normal">658</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">uint32</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">byte_order</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">"big"</span><span class="p">,</span> <span class="s2">"little"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"big"</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">660</span>
+<span class="normal">661</span>
+<span class="normal">662</span>
+<span class="normal">663</span>
+<span class="normal">664</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">uint32</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">byte_order</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">"big"</span><span class="p">,</span> <span class="s2">"little"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"big"</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""[int][] &amp;mdash; Returns the register data as an unsigned, 32-bit integer for the specified `byte_order`."""</span>
-    <span class="n">b</span> <span class="o">=</span> <span class="s2">"&gt;"</span> <span class="k">if</span> <span class="n">byte_order</span> <span class="o">==</span> <span class="s2">"big"</span> <span class="k">else</span> <span class="s2">"&lt;"</span>
-    <span class="n">u32</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">unpack</span><span class="p">(</span><span class="n">b</span> <span class="o">+</span> <span class="s2">"I"</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="k">if</span> <span class="n">byte_order</span> <span class="o">==</span> <span class="s2">"big"</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">2</span><span class="p">:]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span>
+    <span class="n">u32</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">unpack</span><span class="p">(</span><span class="s2">"&gt;I"</span><span class="p">,</span> <span class="n">data</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
     <span class="k">return</span> <span class="n">u32</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -10278,14 +10290,14 @@ methods.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/msl/equipment/interfaces/modbus.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">660</span>
-<span class="normal">661</span>
-<span class="normal">662</span>
-<span class="normal">663</span>
-<span class="normal">664</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">uint64</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">byte_order</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">"big"</span><span class="p">,</span> <span class="s2">"little"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"big"</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">666</span>
+<span class="normal">667</span>
+<span class="normal">668</span>
+<span class="normal">669</span>
+<span class="normal">670</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">uint64</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">byte_order</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">"big"</span><span class="p">,</span> <span class="s2">"little"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"big"</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""[int][] &amp;mdash; Returns the register data as an unsigned, 64-bit integer for the specified `byte_order`."""</span>
-    <span class="n">b</span> <span class="o">=</span> <span class="s2">"&gt;"</span> <span class="k">if</span> <span class="n">byte_order</span> <span class="o">==</span> <span class="s2">"big"</span> <span class="k">else</span> <span class="s2">"&lt;"</span>
-    <span class="n">u64</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">unpack</span><span class="p">(</span><span class="n">b</span> <span class="o">+</span> <span class="s2">"Q"</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="k">if</span> <span class="n">byte_order</span> <span class="o">==</span> <span class="s2">"big"</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">6</span><span class="p">:]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">4</span><span class="p">:</span><span class="mi">6</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">2</span><span class="p">:</span><span class="mi">4</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span>
+    <span class="n">u64</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">unpack</span><span class="p">(</span><span class="s2">"&gt;Q"</span><span class="p">,</span> <span class="n">data</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
     <span class="k">return</span> <span class="n">u64</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -10313,13 +10325,13 @@ for more details about the <code>format</code> parameter. Modbus data is typical
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/msl/equipment/interfaces/modbus.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">666</span>
-<span class="normal">667</span>
-<span class="normal">668</span>
-<span class="normal">669</span>
-<span class="normal">670</span>
-<span class="normal">671</span>
-<span class="normal">672</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">unpack</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">format</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>  <span class="c1"># noqa: A002</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">672</span>
+<span class="normal">673</span>
+<span class="normal">674</span>
+<span class="normal">675</span>
+<span class="normal">676</span>
+<span class="normal">677</span>
+<span class="normal">678</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">unpack</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">format</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>  <span class="c1"># noqa: A002</span>
 <span class="w">    </span><span class="sd">"""[tuple][] &amp;mdash; Returns a tuple containing the register data unpacked according to the `format` string.</span>
 
 <span class="sd">    See [Byte Order, Size, and Alignment][struct-alignment] and [Format Characters][format-characters]</span>
